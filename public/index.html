@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Itinerator</title>
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Vidaloka" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+<div id="all">
+  <h3>Event Itinerator</h3>
+    <div id="container" style="width:100%">
+  <div id="left" style="float:left; width:35%"> This is left panel <br>
+  <form id="form">
+    <input id="locality" type="text" placeholder="Enter City"><br>
+    <input id="region" type="text" placeholder="Enter State"><br>
+    <input id="postalCode" type="text" placeholder="Enter Zip Code"><br></br>
+    <input type="submit" value="Submit"><br>
+  </div>
+  <div id="right" style="float:right; width:65%"> This is right panel
+      <div id="map"></div>
+  </div>
+</form>
+</div>
+</div>
+
+<script src="./main.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOK8unHwKjh44byRIfMgAuRBpoH63_CqE&callback=initMap" type="text/javascript"></script>
+<!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC46J7DlCyI-jZLtGueSXja2uDkdDEJYRA&libraries=places&callback=mainVm.initMap">
+</script> -->
+</body>
+</html>
