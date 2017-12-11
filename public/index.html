@@ -3,34 +3,164 @@
 
 <head>
   <title>Itinerator</title>
-  <script src="https://unpkg.com/vue"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue.js"></script>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <!-- <script src="https://unpkg.com/vue"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+  <script src="./main.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOK8unHwKjh44byRIfMgAuRBpoH63_CqE&libraries=geometry,places&callback=initMap" async defer></script>
   <link href="https://fonts.googleapis.com/css?family=Vidaloka" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
-<div id="all">
-  <h3>Event Itinerator</h3>
-    <div id="container" style="width:100%">
+   <div id="all">
+  <div id="header">
+    <h3>Welcome to the Itinerator</h3>
+    <img src="Vancouver_sunset.jpg" height="300px" width=1400px>
+  </div>
+  <div id="btn_container" style="width:100%;">
+    <div id="leftBtn" style="float:left; width:40%;">
+      <div id="placeHeader">Places</div>
+    <div id="placeField">
+
+      <!-- <div id="placeHeader">Places</div> -->
+      <select required id="placeType">
+      <option selected disabled>Search for type of place</option>
+      <option value="rest">restaurant</option>
+      <option value="lodging">lodging</option>
+      <option value="bar">bar</option>
+      <option value="cafe">cafe</option>
+      <option value="bakery">bakery</option>
+      <option value="campground">campground</option>
+
+    </select>
+    </div>
+    <div id="locationField">
+      <input id="autocomplete" placeholder=" Enter a city" type="text">
+    </div>
+    <div id="controls">
+      <select id="country">
+      <option value="all">All</option>
+      <option value="au">Australia</option>
+      <option value="br">Brazil</option>
+      <option value="ca">Canada</option>
+      <option value="fr">France</option>
+      <option value="de">Germany</option>
+      <option value="mx">Mexico</option>
+      <option value="nz">New Zealand</option>
+      <option value="it">Italy</option>
+      <option value="za">South Africa</option>
+      <option value="es">Spain</option>
+      <option value="pt">Portugal</option>
+      <option value="us"selected>U.S.A.</option>
+      <option value="uk">United Kingdom</option>
+    </select>
+    </div>
+  </div>
+    <div id="rightBtn" style="float:left; width:40%;">
+    <div id="eventHeader">Events</div>
+    <form id="eventsForm">
+      <select id = "eventType">
+        <option value="concert">concert</option>
+        <option value="festival">festival</option>
+        <option value="arts">performing arts</option>
+        <option value="nightlife">nightlife</option>
+        <option value="movies">movie</option>
+      </select>
+      <select id = "eventTime">
+        <option value="today">today</option>
+        <option value="this week">this week</option>
+        <option value="next week">next week</option>
+        <option value="next week">this month</option>
+        <option value="next week">this year</option>
+        <input id="eventSubmit" type="submit" value="Find Events">
+      </select>
+    </form>
+  </div>
+    <div id="farBtn" style="float:left; width:20%;">
+      <div id="trailHeader">Trails</div>
+      <form id="subForm">
+        <input id="trailsSubmit" type="submit" value="Find Trails"><br>
+      </form>
+    </div>
+  </div>
+</div>
+
+    <div id="container" style="width:100%;">
+      <div id="left" style="float:left; width:75%; padding:5px;">
+        <div id="map"></div>
+      </div>
+      <div id="right" style="float:right; width:25%;">
+        <div id="listing">
+          <table id="resultsTable">
+            <tbody id="results"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+<!-- contents of cards displayed on map after marker click-->
+    <div style="display: none">
+      <div id="info-content">
+        <table>
+          <tr id="iw-url-row" class="iw_table_row">
+            <td id="iw-icon" class="iw_table_icon"></td>
+            <td id="iw-url"></td>
+          </tr>
+          <tr id="iw-address-row" class="iw_table_row">
+            <td class="iw_attribute_name">Address:</td>
+            <td id="iw-address"></td>
+          </tr>
+          <tr id="iw-phone-row" class="iw_table_row">
+            <td class="iw_attribute_name">Telephone:</td>
+            <td id="iw-phone"></td>
+          </tr>
+          <tr id="iw-rating-row" class="iw_table_row">
+            <td class="iw_attribute_name">Rating:</td>
+            <td id="iw-rating"></td>
+          </tr>
+          <tr id="iw-website-row" class="iw_table_row">
+            <td class="iw_attribute_name">Website:</td>
+            <td id="iw-website"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div id="trailResults"></div>
+</body>
+
+</html>
+<!-- <div id="container" style="width:100%">
   <div id="left" style="float:left; width:35%"> This is left panel <br>
   <form id="form">
-    <input id="locality" type="text" placeholder="Enter City"><br>
-    <input id="region" type="text" placeholder="Enter State"><br>
-    <input id="postalCode" type="text" placeholder="Enter Zip Code"><br></br>
-    <input type="submit" value="Submit"><br>
+    <input id="searchTextField" type="text" size="40" placeholder="Enter keyword and location, i.e. pizza in Denver">
+    <input id="eventType" type="text" placeholder="Enter Event Type"><br>
+    <input id="location" type="text" placeholder="Enter Location"><br>
+    <input id="date" type="text" placeholder="Enter Date"><br></br>
+    <input type="submit" value="Find Events"><br>
+
+      <!<div id="app">
+        <br>
+        <h4>Events Results</h4>
+        <h3 v-if="events === undefined">No results found</h3>
+        <div v-for="(item,index) in events" v-if="!item.hidden && index<5"><br>
+          <p>{{item.events.title}}</p>
+          <p>{{item.streetAddress}}</p>
+          <p>{{item.locality}}, {{item.region}} {{item.postalCode}}</p>
+          <p><a v-bind:href="item.website">{{item.website}}</a></p>
+          <input id="delete" type="button" v-on:click="removeBrewery(item, index, $event)" value="Delete">
+          <input type="button" value="Add to Route" v-on:click="addBrewery(item, $event)">
+        </div>
+      </div> -->
+
+<!-- </div>
   </div>
+
   <div id="right" style="float:right; width:65%"> This is right panel
       <div id="map"></div>
   </div>
-</form>
-</div>
-</div>
-
-<script src="./main.js"></script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOK8unHwKjh44byRIfMgAuRBpoH63_CqE&callback=initMap" type="text/javascript"></script>
-<!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC46J7DlCyI-jZLtGueSXja2uDkdDEJYRA&libraries=places&callback=mainVm.initMap">
-</script> -->
-</body>
-</html>
+</form> -->
