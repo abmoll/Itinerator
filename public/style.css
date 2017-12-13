@@ -3,23 +3,29 @@
   html, body {
     height: 100%;
     margin: 0;
+    background-color: #f2ecd7;
   }
   table {
     font-size: 12px;
   }
   #trailsSubmit {
     text-align: center;
+    margin: 5px;
   }
   #leftBtn, #rightBtn, #farBtn {
-    border-radius: 15px;
-    border: 2px solid #FFFFFF; height: 120px;
+    border-radius: 10px;
+    border: 1px color: #81b27e; height: 120px;
+    border-style: solid;
     padding: 5px;
     padding-top: 2px;
     background: #81b27e;
+    border-width: 1px;
+    background-image: url('../../park2.jpg')
   }
   #eventHeader, #placeHeader, #trailHeader{
     text-align: center;
     font-size: 18px;
+    font-weight: bold;
     height: 25px;
     padding-top: 1px;
   }
@@ -30,7 +36,12 @@
   }
   #header {
     text-align: center;
-    padding: 0px
+    padding: 2px;
+    padding-bottom: 4px;
+    margin-right: 2px;
+    /*font-family: Verdana;*/
+    /*font-style: italic;*/
+    /*font-weight: bold;*/
   }
   #map {
     height: 600px;
@@ -58,6 +69,7 @@
   }
   #eventSubmit, #eventType, #eventTime {
     text-align: center;
+    margin: 2px;
   }
   #submitBtn, #eventsForm {
     padding-top: 3px;

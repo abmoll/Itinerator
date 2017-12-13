@@ -28,11 +28,21 @@ app.get('/apiTrail', function(req, res) {
 app.get('/apiEvent', function(req, res) {
   //var eventUrl = `http://api.eventful.com/json/events/search?app_key=pcXqHp3KG3jmtgNJ&q=music&l=Boulder+Denver&t=This+weekend`
   //var eventUrl = `http://api.eventful.com/json/events/search?app_key=pcXqHp3KG3jmtgNJ&keywords=${req.query.keywords}&location=${req.query.location}&date=${req.query.date}`
-  var eventUrl = `http://api.eventful.com/json/events/search?keywords=${req.query.keywords}&location=${req.query.location}&date=${req.query.date}&sort_order=popularity&app_key=pcXqHp3KG3jmtgNJ`
+  var eventUrl = `http://api.eventful.com/json/events/search?keywords=${req.query.keywords}&location=${req.query.location}&date=${req.query.date}&sort_order=popularity&page_size=14&app_key=pcXqHp3KG3jmtgNJ`
   request(eventUrl, function(err, response, body) {
     console.log("started API request");
     //console.log("req.query="+req.query);
     //console.log(response)
+    res.send(body)
+  })
+})
+
+app.get('/getPlaceId', function(req, res) {
+  var geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${req.query.latlng}&key=AIzaSyCOK8unHwKjh44byRIfMgAuRBpoH63_CqE`
+  request(geoUrl, function(err, response, body) {
+    console.log("started API request");
+    //console.log("req.query="+req.query);
+    console.log(body)
     res.send(body)
   })
 })

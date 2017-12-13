@@ -18,15 +18,13 @@
 <body>
    <div id="all">
   <div id="header">
-    <h3>Welcome to the Itinerator</h3>
-    <img src="Vancouver_sunset.jpg" height="300px" width=1400px>
+    <h3>The Itinerator</h3>
+    <img src="Vancouver_sunset.jpg" height="220px" width=1000px>
   </div>
   <div id="btn_container" style="width:100%;">
     <div id="leftBtn" style="float:left; width:40%;">
       <div id="placeHeader">Places</div>
     <div id="placeField">
-
-      <!-- <div id="placeHeader">Places</div> -->
       <select required id="placeType">
       <option selected disabled>Search for type of place</option>
       <option value="rest">restaurant</option>
@@ -34,8 +32,6 @@
       <option value="bar">bar</option>
       <option value="cafe">cafe</option>
       <option value="bakery">bakery</option>
-      <option value="campground">campground</option>
-
     </select>
     </div>
     <div id="locationField">
@@ -70,19 +66,24 @@
         <option value="nightlife">nightlife</option>
         <option value="movies">movie</option>
       </select>
-      <select id = "eventTime">
+      <select id = "eventTime" style="padding: 5px;">
         <option value="today">today</option>
         <option value="this week">this week</option>
         <option value="next week">next week</option>
-        <option value="next week">this month</option>
-        <option value="next week">this year</option>
+        <option value="thismonth">this month</option>
+        <option value="jan">Jan</option>
+        <option value="feb">Feb</option>
+        <option value="mar">Mar</option>
+        <option value="apr">Apr</option>
+        <option value="may">May</option>
+        <option value="jun">Jun</option>
         <input id="eventSubmit" type="submit" value="Find Events">
       </select>
     </form>
   </div>
     <div id="farBtn" style="float:left; width:20%;">
       <div id="trailHeader">Trails</div>
-      <form id="subForm">
+      <form id="trailForm">
         <input id="trailsSubmit" type="submit" value="Find Trails"><br>
       </form>
     </div>
@@ -134,33 +135,3 @@
 </body>
 
 </html>
-<!-- <div id="container" style="width:100%">
-  <div id="left" style="float:left; width:35%"> This is left panel <br>
-  <form id="form">
-    <input id="searchTextField" type="text" size="40" placeholder="Enter keyword and location, i.e. pizza in Denver">
-    <input id="eventType" type="text" placeholder="Enter Event Type"><br>
-    <input id="location" type="text" placeholder="Enter Location"><br>
-    <input id="date" type="text" placeholder="Enter Date"><br></br>
-    <input type="submit" value="Find Events"><br>
-
-      <!<div id="app">
-        <br>
-        <h4>Events Results</h4>
-        <h3 v-if="events === undefined">No results found</h3>
-        <div v-for="(item,index) in events" v-if="!item.hidden && index<5"><br>
-          <p>{{item.events.title}}</p>
-          <p>{{item.streetAddress}}</p>
-          <p>{{item.locality}}, {{item.region}} {{item.postalCode}}</p>
-          <p><a v-bind:href="item.website">{{item.website}}</a></p>
-          <input id="delete" type="button" v-on:click="removeBrewery(item, index, $event)" value="Delete">
-          <input type="button" value="Add to Route" v-on:click="addBrewery(item, $event)">
-        </div>
-      </div> -->
-
-<!-- </div>
-  </div>
-
-  <div id="right" style="float:right; width:65%"> This is right panel
-      <div id="map"></div>
-  </div>
-</form> -->
