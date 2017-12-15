@@ -2,25 +2,27 @@
    * element that contains the map. */
   html, body {
     height: 100%;
+    font-family: 'Oswald', sans-serif;
     margin: 0;
     background-color: #f2ecd7;
+    background-image: url('../../back3.jpg')
   }
   table {
     font-size: 12px;
   }
   #trailsSubmit {
     text-align: center;
-    margin: 5px;
+    margin: 1px;
   }
   #leftBtn, #rightBtn, #farBtn {
     border-radius: 10px;
     border: 1px color: #81b27e; height: 120px;
-    border-style: solid;
-    padding: 5px;
-    padding-top: 2px;
-    background: #81b27e;
+    border-style: dotted;
+    padding: 2px;
+    padding-top: 0px;
+    /*background: #81b27e;*/
     border-width: 1px;
-    background-image: url('../../park2.jpg')
+    /*background-image: url('../../worldmapA.jpg');*/
   }
   #eventHeader, #placeHeader, #trailHeader{
     text-align: center;
@@ -44,9 +46,9 @@
     /*font-weight: bold;*/
   }
   #map {
-    height: 600px;
+    height: 650px;
     width: 100%;
-    padding: 10px;
+    padding: 0px;
     text-align: center;
   }
   #listing {
@@ -85,7 +87,7 @@
     text-align: center;
     padding: 2px;
     height: 25px;
-    top: 0px;
+    /*top: 0px;*/
     z-index: 5;
   }
   #locationField {

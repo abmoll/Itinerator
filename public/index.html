@@ -12,14 +12,15 @@
   <script src="./main.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOK8unHwKjh44byRIfMgAuRBpoH63_CqE&libraries=geometry,places&callback=initMap" async defer></script>
   <link href="https://fonts.googleapis.com/css?family=Vidaloka" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Oswald" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
    <div id="all">
   <div id="header">
-    <h3>The Itinerator</h3>
-    <img src="Vancouver_sunset.jpg" height="220px" width=1000px>
+    <h3>Itinerator</h3>
+    <!-- <img src="Vancouver_sunset.jpg" height="220px" width=100% opacity='0.5'> -->
   </div>
   <div id="btn_container" style="width:100%;">
     <div id="leftBtn" style="float:left; width:40%;">
@@ -91,10 +92,10 @@
 </div>
 
     <div id="container" style="width:100%;">
-      <div id="left" style="float:left; width:75%; padding:5px;">
+      <div id="left" style="float:left; width:75%; padding:0px;">
         <div id="map"></div>
       </div>
-      <div id="right" style="float:right; width:25%;">
+      <div id="right" style="float:right; width:25%; padding:0px;">
         <div id="listing">
           <table id="resultsTable">
             <tbody id="results"></tbody>
@@ -127,6 +128,22 @@
             <td class="iw_attribute_name">Website:</td>
             <td id="iw-website"></td>
           </tr>
+            <tr id="iw-difficulty-row" class="iw_table_row">
+              <td class="iw_attribute_name">Difficulty:</td>
+              <td id="iw-difficulty"></td>
+              </tr>
+              <tr id="iw-venue-row" class="iw_table_row">
+                <td class="iw_attribute_name">Venue:</td>
+                <td id="iw-venue"></td>
+              </tr>
+                <tr id="iw-eventDate-row" class="iw_table_row">
+                  <td class="iw_attribute_name">Date:</td>
+                  <td id="iw-eventDate"></td>
+                </tr>
+                <tr id="iw-elevGain-row" class="iw_table_row">
+                  <td class="iw_attribute_name">Ascent (ft):</td>
+                  <td id="iw-elevGain"></td>
+                </tr>
         </table>
       </div>
     </div>

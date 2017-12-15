@@ -247,6 +247,7 @@ $(document).ready(function() {
               rating: body.trails[i].stars,
               url: body.trails[i].url,
               difficulty: body.trails[i].difficulty,
+              elevGain: body.trails[i].ascent,
               summary: body.trails[i].summary,
               image: body.trails[i].imgSmall,
               geometry: {
@@ -259,24 +260,6 @@ $(document).ready(function() {
             addResultTrail(result[i], i);
           }
         })
-
-          // var lat = result[0].geometry.location.lat
-          // var lng = result[0].geometry.location.lng
-          // var latlng = lat + ',' + lng
-          // console.log('latlng = ' + latlng)
-          //
-          // $.get(`/getPlaceId?latlng=${latlng}`, function(body, status) {
-          //   var result2 = []
-          //   //body = JSON.parse(body);
-          //   console.log("Here's the body: " + body)
-          //   for (var i = 0; i < 9; i++) {
-          //     result2.push({
-          //       place_id: body.results[i].place_id
-          //       // place_id: ChIJj_jCfVJ5bIcR0GcWvs-SkkA
-          //     })
-          //     console.log("placeID: " + result2[i].place_id)
-          //   }
-          // })
 
         })
 
@@ -298,6 +281,7 @@ $(document).ready(function() {
                 name: body.events.event[i].title,
                 url: body.events.event[i].url,
                 address: body.events.event[i].venue_address,
+                venue: body.events.event[i].venue_name,
                 //image: body.events.event[i].image.small.url,
                 rating: "",
                 start_time: body.events.event[i].start_time,
@@ -351,7 +335,7 @@ $(document).ready(function() {
 
           iconTd.appendChild(icon);
           nameTd.appendChild(name);
-          nameTd.appendChild(rating);
+          ratingTd.appendChild(rating);
 
           tr.appendChild(iconTd);
           tr.appendChild(nameTd);
@@ -361,9 +345,6 @@ $(document).ready(function() {
         }
 
         function addResultEvent(result, i) {
-          // var results = document.getElementById('results');
-          // var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-          // var labelIndex = 0;
           var markerLetter = String.fromCharCode('a'.charCodeAt(0) + (i % 26));
           //var markerIcon = MARKER_URL + markerLetter + '.png';
           var markerIcon = `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=${markerLetter}|FE7569`
@@ -378,21 +359,20 @@ $(document).ready(function() {
               position: result.geometry.location,
               animation: google.maps.Animation.DROP,
               icon: markerIcon,
-              //label: labels[labelIndex++ % labels.length],
               //label: markerLetter
             });
-            // If the user clicks a marker, show the details of that marker
-            // in an info window.
-            function showInfoWindowTrail() {
+
+            function showInfoWindowEvent() {
               var marker = this;
               infoWindow.open(map, marker);
-              buildIWContentTrail(markers[i].placeResult);
+              buildIWContentEvent(markers[i].placeResult);
             }
 
             // If the user clicks a marker, show the details of that marker
             // in an info window.
             markers[i].placeResult = result;
-            google.maps.event.addListener(markers[i], 'click', showInfoWindowTrail);
+            console.log(markers[i].placeResult.start_time)
+            google.maps.event.addListener(markers[i], 'click', showInfoWindowEvent);
             setTimeout(dropMarker(i), i * 100);
 
           };
@@ -465,7 +445,7 @@ $(document).ready(function() {
 
           iconTd.appendChild(icon);
           nameTd.appendChild(name);
-          nameTd.appendChild(rating);
+          ratingTd.appendChild(rating);
 
           tr.appendChild(iconTd);
           tr.appendChild(nameTd);
@@ -497,25 +477,46 @@ $(document).ready(function() {
             });
         }
 
-          // places.getDetails({
-          //     placeId: marker.placeResult.place_id
-          //   },
-          //   function(place, status) {
-          //     if (status !== google.maps.places.PlacesServiceStatus.OK) {
-          //       return;
-          //     }
-          //   });
+        // Load the place information into the HTML elements used by the info window.
+        function buildIWContentEvent(place) {
+          // document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon" ' +
+          //   'src="' + place.icon + '"/>';
+          document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url +
+            '">' + place.name + '</a></b>';
+          document.getElementById('iw-website-row').style.display = 'none';
+          document.getElementById('iw-rating-row').style.display = 'none';
+          document.getElementById('iw-difficulty-row').style.display = 'none';
+          document.getElementById('iw-address-row').style.display = 'none';
+          //document.getElementById('iw-address').textContent = place.address;
+          document.getElementById('iw-eventDate-row').style.display = '';
+          document.getElementById('iw-eventDate').textContent = place.start_time;
+          document.getElementById('iw-venue-row').style.display = '';
+          document.getElementById('iw-venue').textContent = place.venue;
+          document.getElementById('iw-elevGain-row').style.display = 'none';
 
-
+          if (place.formatted_phone_number) {
+            document.getElementById('iw-phone-row').style.display = '';
+            document.getElementById('iw-phone').textContent =
+              place.formatted_phone_number;
+          } else {
+            document.getElementById('iw-phone-row').style.display = 'none';
+          }
+    }
         // Load the place information into the HTML elements used by the info window.
         function buildIWContentTrail(place) {
           // document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon" ' +
           //   'src="' + place.icon + '"/>';
           document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url +
             '">' + place.name + '</a></b>';
-          document.getElementById('iw-address').textContent = place.vicinity;
+          //document.getElementById('iw-address').textContent = place.vicinity;
           document.getElementById('iw-website-row').style.display = 'none';
           document.getElementById('iw-address-row').style.display = 'none';
+          document.getElementById('iw-eventDate-row').style.display = 'none';
+          document.getElementById('iw-difficulty-row').style.display = '';
+          document.getElementById('iw-difficulty').textContent = place.difficulty;
+          document.getElementById('iw-venue-row').style.display = 'none';
+          document.getElementById('iw-elevGain-row').style.display = '';
+          document.getElementById('iw-elevGain').textContent = place.elevGain;
 
           if (place.formatted_phone_number) {
             document.getElementById('iw-phone-row').style.display = '';
@@ -551,6 +552,10 @@ $(document).ready(function() {
           document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url +
             '">' + place.name + '</a></b>';
           document.getElementById('iw-address').textContent = place.vicinity;
+          document.getElementById('iw-eventDate-row').style.display = 'none';
+          document.getElementById('iw-difficulty-row').style.display = 'none';
+          document.getElementById('iw-venue-row').style.display = 'none';
+          document.getElementById('iw-elevGain-row').style.display = 'none';
 
           if (place.formatted_phone_number) {
             document.getElementById('iw-phone-row').style.display = '';
@@ -594,8 +599,3 @@ $(document).ready(function() {
           }
         }
       })
-
-      // $("#form").submit(function(event) {
-      //   event.preventDefault();
-      //   var keywords = document.getElementById("eventType").value;
-      //   var location = document.getElementById("location").value;
