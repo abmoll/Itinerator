@@ -15,7 +15,6 @@
     margin: 1px;
   }
   #leftBtn, #rightBtn, #farBtn {
-    /*display: inline-block;*/
     border-radius: 10px;
     border: 1px color: #81b27e; height: 120px;
     border-style: dotted;
@@ -23,6 +22,10 @@
     padding-top: 0px;
     border-width: 1px;
   }
+  /*#leftBtn{
+    display: inline-block;
+    min-width: 160px;
+  }*/
   #eventHeader, #placeHeader, #trailHeader{
     text-align: center;
     font-size: 18px;
@@ -44,20 +47,12 @@
   #placeForm {
     padding: 2px;
   }
-  #placeField, #placeType {
+  #placeType {
     text-align: center;
     padding: 2px;
+    max-width: 150px;
     /*height: 25px;*/
     /*top: 0px;*/
-    z-index: 5;
-  }
-  #locationField {
-    text-align: center;
-    /*
-    position: relative;
-    padding: 3px;
-    height: 25px;
-    top: 0px;*/
     z-index: 5;
   }
   #findPlace{
@@ -70,6 +65,7 @@
   #autocomplete {
     text-align: center;
     position: relative;
+    width: auto;
     /*padding-top: 1px;*/
     /*width: 250px;*/
     height: 27px;
