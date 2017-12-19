@@ -39,7 +39,7 @@
     width: 100%;
     max-width:100px;
     padding: 0px;
-    margin: auto;
+    /*margin: auto;*/
     text-align: center;
   }
   #eventSubmit {
