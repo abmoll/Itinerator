@@ -25,20 +25,21 @@
   <div id="btn_container" style="width:100%;">
     <div id="leftBtn" style="float:left; width:40%;">
       <div id="placeHeader">Places</div>
-    <div id="placeField">
+      <form id="placeForm">
+    <!-- <div id="placeField"> -->
       <select required id="placeType">
-      <option selected disabled>Search for type of place</option>
+      <option selected disabled>Select type of place</option>
       <option value="rest">restaurant</option>
       <option value="lodging">lodging</option>
       <option value="bar">bar</option>
       <option value="cafe">cafe</option>
       <option value="bakery">bakery</option>
     </select>
-    </div>
-    <div id="locationField">
-      <input id="autocomplete" placeholder=" Enter a city" type="text">
-    </div>
-    <div id="controls">
+    <!-- </div> -->
+    <!-- <div id="locationField"> -->
+      <input id="autocomplete" placeholder="Enter a city  " type="text" onfocus="this.value='';">
+    <!-- </div> -->
+    <!-- <div id="controls"> -->
       <select id="country">
       <option value="all">All</option>
       <option value="au">Australia</option>
@@ -55,7 +56,8 @@
       <option value="us"selected>U.S.A.</option>
       <option value="uk">United Kingdom</option>
     </select>
-    </div>
+    <!-- </div> -->
+  </form>
   </div>
     <div id="rightBtn" style="float:left; width:40%;">
     <div id="eventHeader">Events</div>
@@ -67,7 +69,7 @@
         <option value="nightlife">nightlife</option>
         <option value="movies">movie</option>
       </select>
-      <select id = "eventTime" style="padding: 5px;">
+      <select id = "eventTime">
         <option value="today">today</option>
         <option value="this week">this week</option>
         <option value="next week">next week</option>
