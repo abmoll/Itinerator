@@ -35,6 +35,8 @@
   }
   #eventSubmit, #eventType, #eventTime {
     text-align: center;
+    width: 100%;
+    max-width: 130px;
     /*padding: 2px;*/
   }
   #eventSubmit {
@@ -50,22 +52,21 @@
   #placeType {
     text-align: center;
     padding: 2px;
-    max-width: 150px;
+    width: 100%
+    max-width: 130px;
     /*height: 25px;*/
     /*top: 0px;*/
     z-index: 5;
   }
-  #findPlace{
-    /*text-align: center;
-    position: relative;
-    height: 25px;*/
+  /*#findPlace{
     top: 0px;
     z-index: 5;
-  }
+  }*/
   #autocomplete {
     text-align: center;
     position: relative;
-    width: auto;
+    width: 100%;
+    max-width: 200px;
     /*padding-top: 1px;*/
     /*width: 250px;*/
     height: 27px;
