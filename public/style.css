@@ -10,10 +10,6 @@
   table {
     font-size: 12px;
   }
-  #trailsSubmit {
-    text-align: center;
-    margin: 1px;
-  }
   #leftBtn, #rightBtn, #farBtn {
     border-radius: 10px;
     border: 1px color: #81b27e; height: 120px;
@@ -42,6 +38,7 @@
   #trailsSubmit{
     width: 100%;
     max-width:100px;
+    padding: 0px;
   }
   #eventSubmit {
     margin-left: 4px;
