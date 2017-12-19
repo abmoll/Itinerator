@@ -39,6 +39,10 @@
     max-width: 130px;
     /*padding: 2px;*/
   }
+  #trailsSubmit{
+    width: 100%;
+    max-width:100px;
+  }
   #eventSubmit {
     margin-left: 4px;
     height: 29px;
@@ -53,7 +57,7 @@
     text-align: center;
     padding: 2px;
     width: 100%;
-    max-width: 140px;
+    max-width: 160px;
     /*height: 25px;*/
     /*top: 0px;*/
     z-index: 5;
@@ -66,7 +70,7 @@
     text-align: center;
     position: relative;
     width: 100%;
-    max-width: 200px;
+    max-width: 220px;
     /*padding-top: 1px;*/
     /*width: 250px;*/
     height: 27px;
