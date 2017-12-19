@@ -52,8 +52,8 @@
   #placeType {
     text-align: center;
     padding: 2px;
-    width: 100%
-    max-width: 130px;
+    width: 100%;
+    max-width: 140px;
     /*height: 25px;*/
     /*top: 0px;*/
     z-index: 5;
