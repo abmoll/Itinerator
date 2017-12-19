@@ -39,6 +39,8 @@
     width: 100%;
     max-width:100px;
     padding: 0px;
+    margin: auto;
+    text-align: center;
   }
   #eventSubmit {
     margin-left: 4px;
