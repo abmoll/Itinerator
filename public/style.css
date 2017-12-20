@@ -36,8 +36,9 @@
     /*padding: 2px;*/
   }
   #trailsSubmit{
-    width: 100%;
+    width: 95%;
     max-width: 100px;
+    height: 29px;
     /*margin: auto;*/
     text-align: center;
   }
