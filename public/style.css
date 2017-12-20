@@ -29,7 +29,7 @@
     /*height: 25px;*/
     padding-top: 1px;
   }
-  #eventSubmit, #eventType, #eventTime {
+  #eventType, #eventTime {
     text-align: center;
     width: 100%;
     max-width: 130px;
@@ -37,14 +37,16 @@
   }
   #trailsSubmit{
     width: 100%;
-    max-width:100px;
-    padding: 0px;
+    max-width: 100px;
     /*margin: auto;*/
     text-align: center;
   }
   #eventSubmit {
     margin-left: 3px;
     height: 29px;
+    max-width: 100px;
+    text-align: center;
+    width: 100%;
   }
   #country {
     padding: 2px;
@@ -68,7 +70,7 @@
   #autocomplete {
     text-align: center;
     position: relative;
-    width: 100%;
+    width: 98%;
     max-width: 220px;
     /*padding-top: 1px;*/
     /*width: 250px;*/

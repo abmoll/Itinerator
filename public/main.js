@@ -139,6 +139,8 @@ $(document).ready(function() {
         });
       places = new google.maps.places.PlacesService(map);
 
+      // ** add event listener for placeType: when placeType changes, get autoComplete city **
+
       autocomplete.addListener('place_changed', onPlaceChanged);
 
       // Add a DOM event listener to react when the user selects a country.
