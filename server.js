@@ -37,6 +37,12 @@ app.get('/apiEvent', function(req, res) {
   })
 })
 
+// app.get('/hop', function(request, response) {
+//   response.sendFile('HopToIt/public/index.html', {
+//     root: '../'
+//   })
+// })
+
 app.get('/getPlaceId', function(req, res) {
   var geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${req.query.latlng}&key=AIzaSyCOK8unHwKjh44byRIfMgAuRBpoH63_CqE`
   request(geoUrl, function(err, response, body) {
