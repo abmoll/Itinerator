@@ -53,6 +53,6 @@ app.get('/getPlaceId', function(req, res) {
   })
 })
 
-app.listen(8080, function() {
-  console.log('The app is running on 8080');
+app.listen(80, function() {
+  console.log('The app is running on 80');
 });

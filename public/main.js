@@ -150,7 +150,6 @@ $(document).ready(function() {
   // zoom the map in on the city.
   function onPlaceChanged() {
     var place = autocomplete.getPlace();
-    console.log(place)
     if (place.geometry) {
       map.panTo(place.geometry.location);
       map.setZoom(12);
@@ -372,7 +371,7 @@ $(document).ready(function() {
 
       // If the user clicks a marker, show the details of that marker in an info window.
       markers[i].placeResult = result;
-      console.log(markers[i].placeResult)
+      //console.log(markers[i].placeResult)
       google.maps.event.addListener(markers[i], 'click', showInfoWindowEvent);
       setTimeout(dropMarker(i), i * 100);
     };
