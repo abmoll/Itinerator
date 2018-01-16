@@ -267,7 +267,7 @@ $(document).ready(function() {
     //var location = place.address_components[0].long_name
     //if place country is UK then use place.address_components[0].long_name + "," + place.address_components[4].long_name
     var location = place.formatted_address
-    console.log(location)
+    //console.log(location)
     var keyword = $("#eventType option:selected").text()
     var date = $("#eventTime option:selected").text()
 
@@ -307,7 +307,8 @@ $(document).ready(function() {
 
     // when user clicks on result, add it to map
     tr.onclick = function(evt) {
-      google.maps.event.trigger(markers[i], 'click');
+      //console.log("evt: ", evt)
+      //google.maps.event.trigger(markers[i], 'click');
       markers[i] = new google.maps.Marker({
         position: result.geometry.location,
         animation: google.maps.Animation.DROP,
@@ -315,9 +316,15 @@ $(document).ready(function() {
       });
       // If the user clicks a marker, show the details of that marker
       // in an info window.
+      // console.log("evt: ", evt)
+      console.log("result: " + result)
+      console.log("results: " + results)
+      console.log("markers[i] " + markers[i])
       markers[i].placeResult = result;
-      google.maps.event.addListener(markers[i], 'click', showInfoWindow);
+      console.log("markers[i].placeResult " + markers[i].placeResult)
       setTimeout(dropMarker(i), i * 100);
+      google.maps.event.addListener(markers[i], 'click', showInfoWindow);
+
     };
 
     var iconTd = document.createElement('td');
@@ -339,8 +346,23 @@ $(document).ready(function() {
     tr.appendChild(iconTd);
     tr.appendChild(nameTd);
     tr.appendChild(ratingTd);
-
     results.appendChild(tr);
+  }
+  // Get the place details for a place. Show the information in an info window,
+  // anchored on the marker for the place that the user selected.
+  function showInfoWindow() {
+    var marker = this;
+    console.log("marker: ", marker)
+    places.getDetails({
+      placeId: marker.placeResult.place_id
+    },
+    function(place, status) {
+      if (status !== google.maps.places.PlacesServiceStatus.OK) {
+        return;
+      }
+      infoWindow.open(map, marker);
+      buildIWContent(place);
+    });
   }
 
   function addResultEvent(result, i) {
@@ -351,31 +373,33 @@ $(document).ready(function() {
     var tr = document.createElement('tr');
     tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
 
-    // when user clicks on result, add it to map
+    //when user clicks on result, add it to map
     tr.onclick = function(evt) {
-      google.maps.event.trigger(markers[i], 'click');
+      //google.maps.event.trigger(markers[i], 'click');
       markers[i] = new google.maps.Marker({
         position: result.geometry.location,
         animation: google.maps.Animation.DROP,
         icon: markerIcon,
         //label: markerLetter
       });
-
-      function showInfoWindowEvent() {
-        var marker = this;
-        infoWindow.open(map, marker);
-        // here is the problem!! markers[i] is previous
-        //buildIWContentEvent(markers[i].placeResult);
-        buildIWContentEvent(marker.placeResult);
-      }
+      // console.log("result: " + result)
+      // console.log("results: " + results)
+      // console.log("markers[i] " + markers[i])
+      // console.log("markers[i].placeResult " + markers[i].placeResult)
 
       // If the user clicks a marker, show the details of that marker in an info window.
       markers[i].placeResult = result;
-      //console.log(markers[i].placeResult)
       google.maps.event.addListener(markers[i], 'click', showInfoWindowEvent);
       setTimeout(dropMarker(i), i * 100);
     };
 
+    function showInfoWindowEvent() {
+      var marker = this;
+      infoWindow.open(map, marker);
+      // here is the problem!! markers[i] is previous
+      //buildIWContentEvent(markers[i].placeResult);
+      buildIWContentEvent(marker.placeResult);
+    }
     var iconTd = document.createElement('td');
     var nameTd = document.createElement('td');
     var dateTd = document.createElement('td');
@@ -409,7 +433,7 @@ $(document).ready(function() {
 
     // when user clicks on result, add it to map
     tr.onclick = function(evt) {
-      google.maps.event.trigger(markers[i], 'click');
+      //google.maps.event.trigger(markers[i], 'click');
       markers[i] = new google.maps.Marker({
         position: result.geometry.location,
         animation: google.maps.Animation.DROP,
@@ -460,21 +484,6 @@ $(document).ready(function() {
     }
   }
 
-  // Get the place details for a place. Show the information in an info window,
-  // anchored on the marker for the place that the user selected.
-  function showInfoWindow() {
-    var marker = this;
-    places.getDetails({
-        placeId: marker.placeResult.place_id
-      },
-      function(place, status) {
-        if (status !== google.maps.places.PlacesServiceStatus.OK) {
-          return;
-        }
-        infoWindow.open(map, marker);
-        buildIWContent(place);
-      });
-  }
 
   // Load the place information into the HTML elements used by the info window.
   function buildIWContentEvent(place) {
