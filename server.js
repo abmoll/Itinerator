@@ -27,7 +27,6 @@ app.get('/apiTrail', function(req, res) {
 
 app.get('/apiEvent', function(req, res) {
   //var eventUrl = `http://api.eventful.com/json/events/search?app_key=pcXqHp3KG3jmtgNJ&q=music&l=Boulder+Denver&t=This+weekend`
-  //var eventUrl = `http://api.eventful.com/json/events/search?app_key=pcXqHp3KG3jmtgNJ&keywords=${req.query.keywords}&location=${req.query.location}&date=${req.query.date}`
   var eventUrl = `http://api.eventful.com/json/events/search?keywords=${req.query.keywords}&location=${req.query.location}&date=${req.query.date}&sort_order=popularity&page_size=14&app_key=pcXqHp3KG3jmtgNJ`
   request(eventUrl, function(err, response, body) {
     console.log("started API request");
