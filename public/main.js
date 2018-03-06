@@ -322,7 +322,7 @@ $(document).ready(function() {
       // console.log("results: " + results)
       // console.log("markers[i] " + markers[i])
       var trip = [];
-      trip.push() = markers[i];
+      trip.push(markers[i]);
       console.log("trip: " + JSON.stringify(trip));
       console.log("markers[i].placeResult " + JSON.stringify(markers[i].placeResult));
       setTimeout(dropMarker(i), i * 100);
