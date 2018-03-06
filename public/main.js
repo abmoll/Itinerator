@@ -306,6 +306,7 @@ $(document).ready(function() {
     tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
 
     // when user clicks on result, add it to map
+    // new - also, push the result into a trip array
     tr.onclick = function(evt) {
       //console.log("evt: ", evt)
       //google.maps.event.trigger(markers[i], 'click');
@@ -314,14 +315,16 @@ $(document).ready(function() {
         animation: google.maps.Animation.DROP,
         icon: markerIcon
       });
+      markers[i].placeResult = result;
       // If the user clicks a marker, show the details of that marker
       // in an info window.
-      // console.log("evt: ", evt)
-      console.log("result: " + result)
-      console.log("results: " + results)
-      console.log("markers[i] " + markers[i])
-      markers[i].placeResult = result;
-      console.log("markers[i].placeResult " + markers[i].placeResult)
+      // console.log("result: " + result)
+      // console.log("results: " + results)
+      // console.log("markers[i] " + markers[i])
+      var trip = [];
+      trip.push() = markers[i];
+      console.log("trip: " + JSON.stringify(trip));
+      console.log("markers[i].placeResult " + JSON.stringify(markers[i].placeResult));
       setTimeout(dropMarker(i), i * 100);
       google.maps.event.addListener(markers[i], 'click', showInfoWindow);
 
