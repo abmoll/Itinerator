@@ -270,11 +270,12 @@ $(document).ready(function() {
     //console.log(location)
     var keyword = $("#eventType option:selected").text()
     var date = $("#eventTime option:selected").text()
-
+    
     $.get(`/apiEvent?keywords=${keyword}&location=${location}&date=${date}`, function(body, status) {
       body = JSON.parse(body);
       //console.log(body)
       var result = []
+      var trip = [];
       for (var i = 0; i < 12; i++) {
         result.push({
           name: body.events.event[i].title,
@@ -321,10 +322,9 @@ $(document).ready(function() {
       // console.log("result: " + result)
       // console.log("results: " + results)
       // console.log("markers[i] " + markers[i])
-      var trip = [];
       trip.push(markers[i]);
-      console.log("trip: " + JSON.stringify(trip));
       console.log("markers[i].placeResult " + JSON.stringify(markers[i].placeResult));
+      console.log("trip: " + JSON.stringify(trip));
       setTimeout(dropMarker(i), i * 100);
       google.maps.event.addListener(markers[i], 'click', showInfoWindow);
 
