@@ -4,7 +4,6 @@
 //var eventfulKey = pcXqHp3KG3jmtgNJ
 //var API = http://api.eventful.com/json/events/search?...&location=San+Diego
 //var hikingProjectAPI = 200192113-0e12500ca3d4423414d88aaa658cda2e
-//var https://www.hikingproject.com/data/get-trails?lat=40.0274&lon=-105.2519&maxDistance=10&key=200192113-0e12500ca3d4423414d88aaa658cda2e
 
 // initialize map on webpage
 function initMap() {
@@ -21,6 +20,7 @@ function initMap() {
 var map, places, infoWindow;
 var markers = [];
 var autocomplete;
+var trip = [];
 var countryRestrict = {
   'country': 'us'
 };
@@ -175,11 +175,6 @@ $(document).ready(function() {
         for (var i = 0; i < 13; i++) {
           var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
           var markerIcon = MARKER_PATH + markerLetter + '.png';
-          // // If the user clicks a hotel marker, show the details of that hotel
-          // // in an info window.
-          // markers[i].placeResult = results[i];
-          // google.maps.event.addListener(markers[i], 'click', showInfoWindow);
-          // setTimeout(dropMarker(i), i * 100);
           addResult(results[i], i);
         }
       }
@@ -224,6 +219,95 @@ $(document).ready(function() {
       markers[i].setMap(map);
     };
   }
+
+    // if user selects Display Trip, display the trip array on results panel
+    $("#displayTrip").click(function(event) {
+      event.preventDefault();
+      console.log('Trip displayed here!');
+      clearResults();
+      //trip is an array of all results
+      console.log("Trip array is here: " + JSON.stringify(trip));
+      addResultTrip(trip);
+      // var place2 = autocomplete.getPlace();
+      // var latitude = place2.geometry.location.lat()
+      // var longitude = place2.geometry.location.lng()
+  
+      // $.get(`/apiTrail?lat=${latitude}&lon=${longitude}`, function(body, status) {
+      //   body = JSON.parse(body);
+      //   //console.log(body)
+      //   var result = []
+      //   for (var i = 0; i < 9; i++) {
+      //     result.push({
+      //       name: body.trails[i].name,
+      //       rating: body.trails[i].stars,
+      //       url: body.trails[i].url,
+      //       difficulty: body.trails[i].difficulty,
+      //       elevGain: body.trails[i].ascent,
+      //       summary: body.trails[i].summary,
+      //       image: body.trails[i].imgSmall,
+      //       geometry: {
+      //         location: {
+      //           lat: parseFloat(body.trails[i].latitude),
+      //           lng: parseFloat(body.trails[i].longitude),
+      //         }
+      //       }
+      //     })
+      //   }
+      // })
+    })
+
+    function addResultTrip(trip, i) {
+      // addResultsTrip adds the entire trip array to the results div
+      // it needs some info from each of the places, events, and trails methods
+      // it should retain the result array, marker letter and icon set from those functions
+      var results = document.getElementById('results');
+      var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
+      var markerIcon = MARKER_PATH + markerLetter + '.png';
+      var tr = document.createElement('tr');
+      tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
+  
+      // when user clicks on result, add it to map
+      // new - also, push the result into a trip array
+      tr.onclick = function(evt) {
+        //console.log("evt: ", evt)
+
+        markers[i] = new google.maps.Marker({
+          position: result.geometry.location,
+          animation: google.maps.Animation.DROP,
+          icon: markerIcon
+        });
+        markers[i].placeResult = result;
+        // If the user clicks a marker, show the details of that marker in info window
+  
+        //trip.push(result);
+        //console.log("trip: " + JSON.stringify(trip));
+
+        setTimeout(dropMarker(i), i * 100);
+        google.maps.event.addListener(markers[i], 'click', showInfoWindow);
+  
+      };
+  
+      var iconTd = document.createElement('td');
+      var nameTd = document.createElement('td');
+      var ratingTd = document.createElement('td');
+  
+      var icon = document.createElement('img');
+      icon.src = markerIcon;
+      icon.setAttribute('class', 'placeIcon');
+      icon.setAttribute('className', 'placeIcon');
+  
+      var name = document.createTextNode(trip.name);
+      var rating = document.createTextNode("\nRating: " + trip.rating);
+  
+      iconTd.appendChild(icon);
+      nameTd.appendChild(name);
+      ratingTd.appendChild(rating);
+  
+      tr.appendChild(iconTd);
+      tr.appendChild(nameTd);
+      tr.appendChild(ratingTd);
+      results.appendChild(tr);
+    }
 
   // if user selects trail from drop down
   $("#trailForm").submit(function(event) {
@@ -275,7 +359,6 @@ $(document).ready(function() {
       body = JSON.parse(body);
       //console.log(body)
       var result = []
-      var trip = [];
       for (var i = 0; i < 12; i++) {
         result.push({
           name: body.events.event[i].title,
@@ -298,7 +381,7 @@ $(document).ready(function() {
       }
     })
   })
-
+  
   function addResult(result, i) {
     var results = document.getElementById('results');
     var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
@@ -317,14 +400,11 @@ $(document).ready(function() {
         icon: markerIcon
       });
       markers[i].placeResult = result;
-      // If the user clicks a marker, show the details of that marker
-      // in an info window.
-      // console.log("result: " + result)
-      // console.log("results: " + results)
-      // console.log("markers[i] " + markers[i])
-      trip.push(markers[i]);
-      console.log("markers[i].placeResult " + JSON.stringify(markers[i].placeResult));
-      console.log("trip: " + JSON.stringify(trip));
+      // If the user clicks a marker, show the details of that marker in info window
+
+        trip.push(result);
+        //console.log("markers[i].placeResult " + JSON.stringify(markers[i].placeResult));
+      //}
       setTimeout(dropMarker(i), i * 100);
       google.maps.event.addListener(markers[i], 'click', showInfoWindow);
 
@@ -351,6 +431,7 @@ $(document).ready(function() {
     tr.appendChild(ratingTd);
     results.appendChild(tr);
   }
+
   // Get the place details for a place. Show the information in an info window,
   // anchored on the marker for the place that the user selected.
   function showInfoWindow() {
@@ -392,6 +473,9 @@ $(document).ready(function() {
 
       // If the user clicks a marker, show the details of that marker in an info window.
       markers[i].placeResult = result;
+      // when result is added to map, also push it to trip array
+      trip.push(result);
+
       google.maps.event.addListener(markers[i], 'click', showInfoWindowEvent);
       setTimeout(dropMarker(i), i * 100);
     };
@@ -449,6 +533,7 @@ $(document).ready(function() {
         buildIWContentTrail(marker.placeResult);
       }
 
+      trip.push(result);
       // If the user clicks a marker, show the details of that marker
       // in an info window.
       markers[i].placeResult = result;
