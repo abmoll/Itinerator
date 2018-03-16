@@ -21,6 +21,7 @@ var map, places, infoWindow;
 var markers = [];
 var autocomplete;
 var trip = [];
+var tripIcons = [];
 var countryRestrict = {
   'country': 'us'
 };
@@ -223,89 +224,59 @@ $(document).ready(function() {
     // if user selects Display Trip, display the trip array on results panel
     $("#displayTrip").click(function(event) {
       event.preventDefault();
-      console.log('Trip displayed here!');
       clearResults();
       //trip is an array of all results
-      console.log("Trip array is here: " + JSON.stringify(trip));
-      addResultTrip(trip);
-      // var place2 = autocomplete.getPlace();
-      // var latitude = place2.geometry.location.lat()
-      // var longitude = place2.geometry.location.lng()
-  
-      // $.get(`/apiTrail?lat=${latitude}&lon=${longitude}`, function(body, status) {
-      //   body = JSON.parse(body);
-      //   //console.log(body)
-      //   var result = []
-      //   for (var i = 0; i < 9; i++) {
-      //     result.push({
-      //       name: body.trails[i].name,
-      //       rating: body.trails[i].stars,
-      //       url: body.trails[i].url,
-      //       difficulty: body.trails[i].difficulty,
-      //       elevGain: body.trails[i].ascent,
-      //       summary: body.trails[i].summary,
-      //       image: body.trails[i].imgSmall,
-      //       geometry: {
-      //         location: {
-      //           lat: parseFloat(body.trails[i].latitude),
-      //           lng: parseFloat(body.trails[i].longitude),
-      //         }
-      //       }
-      //     })
-      //   }
-      // })
+      for (var i = 0; i < trip.length; i++) {
+        addResultTrip(trip,i);
+      }
     })
 
     function addResultTrip(trip, i) {
-      // addResultsTrip adds the entire trip array to the results div
+      // addResultTrip adds the entire trip array to the results div
       // it needs some info from each of the places, events, and trails methods
       // it should retain the result array, marker letter and icon set from those functions
       var results = document.getElementById('results');
-      var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
-      var markerIcon = MARKER_PATH + markerLetter + '.png';
       var tr = document.createElement('tr');
       tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
-  
-      // when user clicks on result, add it to map
-      // new - also, push the result into a trip array
-      tr.onclick = function(evt) {
-        //console.log("evt: ", evt)
+      if (trip[i].hasOwnProperty('start_time')) 
+        var isEvent = true;
 
-        markers[i] = new google.maps.Marker({
-          position: result.geometry.location,
-          animation: google.maps.Animation.DROP,
-          icon: markerIcon
-        });
-        markers[i].placeResult = result;
-        // If the user clicks a marker, show the details of that marker in info window
-  
-        //trip.push(result);
-        //console.log("trip: " + JSON.stringify(trip));
-
-        setTimeout(dropMarker(i), i * 100);
-        google.maps.event.addListener(markers[i], 'click', showInfoWindow);
-  
-      };
-  
+      // create blank cells
       var iconTd = document.createElement('td');
       var nameTd = document.createElement('td');
-      var ratingTd = document.createElement('td');
-  
+      if (isEvent) 
+        var dateTd = document.createElement('td');
+      else
+        var ratingTd = document.createElement('td');
+
+      //create attibutes of the icon
       var icon = document.createElement('img');
-      icon.src = markerIcon;
+      icon.src = tripIcons[i];
       icon.setAttribute('class', 'placeIcon');
       icon.setAttribute('className', 'placeIcon');
-  
-      var name = document.createTextNode(trip.name);
-      var rating = document.createTextNode("\nRating: " + trip.rating);
-  
+      
+      var name = document.createTextNode(trip[i].name);
+      if (isEvent) 
+        var date = document.createTextNode(trip[i].start_time);
+      else
+        var rating = document.createTextNode("\nRating: " + trip[i].rating);
+
+      // add data to cells
       iconTd.appendChild(icon);
       nameTd.appendChild(name);
-      ratingTd.appendChild(rating);
-  
+      if (isEvent) 
+        dateTd.appendChild(date);
+      else 
+        ratingTd.appendChild(rating);
+
+      // add cells to rows
       tr.appendChild(iconTd);
       tr.appendChild(nameTd);
-      tr.appendChild(ratingTd);
+      if (isEvent) 
+        tr.appendChild(dateTd);
+      else
+        tr.appendChild(ratingTd);
+
       results.appendChild(tr);
     }
 
@@ -324,6 +295,7 @@ $(document).ready(function() {
       var result = []
       for (var i = 0; i < 9; i++) {
         result.push({
+          //icon: markers[i].markerIcon,
           name: body.trails[i].name,
           rating: body.trails[i].stars,
           url: body.trails[i].url,
@@ -400,14 +372,13 @@ $(document).ready(function() {
         icon: markerIcon
       });
       markers[i].placeResult = result;
-      // If the user clicks a marker, show the details of that marker in info window
+      // Add the result to the trip array
+      trip.push(result);
+      tripIcons.push(markerIcon);
 
-        trip.push(result);
-        //console.log("markers[i].placeResult " + JSON.stringify(markers[i].placeResult));
-      //}
       setTimeout(dropMarker(i), i * 100);
+      // If the user clicks a marker, show the details of that marker in info window
       google.maps.event.addListener(markers[i], 'click', showInfoWindow);
-
     };
 
     var iconTd = document.createElement('td');
@@ -436,7 +407,6 @@ $(document).ready(function() {
   // anchored on the marker for the place that the user selected.
   function showInfoWindow() {
     var marker = this;
-    console.log("marker: ", marker)
     places.getDetails({
       placeId: marker.placeResult.place_id
     },
@@ -457,7 +427,7 @@ $(document).ready(function() {
     var tr = document.createElement('tr');
     tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
 
-    //when user clicks on result, add it to map
+    //when user clicks on result, add it to map and add the markerIcon
     tr.onclick = function(evt) {
       //google.maps.event.trigger(markers[i], 'click');
       markers[i] = new google.maps.Marker({
@@ -466,15 +436,12 @@ $(document).ready(function() {
         icon: markerIcon,
         //label: markerLetter
       });
-      // console.log("result: " + result)
-      // console.log("results: " + results)
-      // console.log("markers[i] " + markers[i])
-      // console.log("markers[i].placeResult " + markers[i].placeResult)
 
       // If the user clicks a marker, show the details of that marker in an info window.
       markers[i].placeResult = result;
       // when result is added to map, also push it to trip array
       trip.push(result);
+      tripIcons.push(markerIcon);
 
       google.maps.event.addListener(markers[i], 'click', showInfoWindowEvent);
       setTimeout(dropMarker(i), i * 100);
@@ -487,6 +454,8 @@ $(document).ready(function() {
       //buildIWContentEvent(markers[i].placeResult);
       buildIWContentEvent(marker.placeResult);
     }
+
+    // places data into results column
     var iconTd = document.createElement('td');
     var nameTd = document.createElement('td');
     var dateTd = document.createElement('td');
@@ -533,6 +502,7 @@ $(document).ready(function() {
         buildIWContentTrail(marker.placeResult);
       }
 
+      tripIcons.push(markerIcon);
       trip.push(result);
       // If the user clicks a marker, show the details of that marker
       // in an info window.
@@ -542,10 +512,12 @@ $(document).ready(function() {
     };
 
     // adding list results on right
+    // creating blank cells
     var iconTd = document.createElement('td');
     var nameTd = document.createElement('td');
     var ratingTd = document.createElement('td');
 
+    // fill in atrributes of the icon
     var icon = document.createElement('img');
     icon.src = markerIcon;
     icon.setAttribute('class', 'placeIcon');
@@ -554,14 +526,17 @@ $(document).ready(function() {
     var name = document.createTextNode(result.name);
     var rating = document.createTextNode("\nRating: " + result.rating);
 
+    // add data into the cells
     iconTd.appendChild(icon);
     nameTd.appendChild(name);
     ratingTd.appendChild(rating);
 
+    // add cells to the rows
     tr.appendChild(iconTd);
     tr.appendChild(nameTd);
     tr.appendChild(ratingTd);
 
+    // add entire row to the results list
     results.appendChild(tr);
   }
 
@@ -571,7 +546,6 @@ $(document).ready(function() {
       results.removeChild(results.childNodes[0]);
     }
   }
-
 
   // Load the place information into the HTML elements used by the info window.
   function buildIWContentEvent(place) {
