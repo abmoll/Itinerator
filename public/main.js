@@ -4,19 +4,6 @@
 //var eventfulKey = pcXqHp3KG3jmtgNJ
 //var API = http://api.eventful.com/json/events/search?...&location=San+Diego
 //var hikingProjectAPI = 200192113-0e12500ca3d4423414d88aaa658cda2e
-
-// initialize map on webpage
-function initMap() {
-  map = new google.maps.Map(document.getElementById('map'), {
-    zoom: countries['us'].zoom,
-    center: countries['us'].center,
-    mapTypeControl: false,
-    panControl: false,
-    zoomControl: false,
-    streetViewControl: false
-  });
-}
-
 var map, places, infoWindow;
 var markers = [];
 var autocomplete;
@@ -28,10 +15,8 @@ var destination;
 var countryRestrict = {
   'country': 'us'
 };
-
 var MARKER_PATH = 'https://developers.google.com/maps/documentation/javascript/images/marker_green';
 var hostnameRegexp = new RegExp('^https?://.+?/');
-
 var countries = {
   'au': {
     center: {
@@ -126,45 +111,52 @@ var countries = {
   }
 };
 
+// initialize map on webpage
+function initMap() {
+   directionsService = new google.maps.DirectionsService();
+   directionsDisplay = new google.maps.DirectionsRenderer();
+  map = new google.maps.Map(document.getElementById('map'), {
+    zoom: countries['us'].zoom,
+    center: countries['us'].center,
+    mapTypeControl: false,
+    panControl: false,
+    zoomControl: false,
+    streetViewControl: false
+  });
+  directionsDisplay.setMap(map);
+  directionsDisplay.setPanel(document.getElementById('listing'));
+}
+    
+function calcRoute(directionsService,directionsDisplay) {
+      var start = origin;
+      var end = destination;
+      var request = {
+        origin: start,
+        destination: end,
+        waypoints: waypoint,
+        travelMode: 'DRIVING'
+      };
+      directionsService.route(request, function(result, status) {
+        if (status == 'OK') {
+          directionsDisplay.setDirections(result);
+    }
+  });
+}
+
+
 $(document).ready(function() {
 
   $("#getDirections").click(function(event) {
     //directions is an array of trip lat,lng
     event.preventDefault();
-    //clearResults();
+    clearResults();
     getDirections(trip);
     // var place2 = autocomplete.getPlace();
     // var latitude = place2.geometry.location.lat()
     // var longitude = place2.geometry.location.lng()
-    console.log("orig: "+ origin);
-    console.log("dest: " + destination);
-
-    $.get(`/apiDirections?origin=${origin}&destination=${destination}`, function(body, status) {
-      //body = JSON.parse(body);
-      console.log("directions: " + body)
-      // this takes the lat/lng or placeId from trip array, calcs
-      // directions, then places them into results area
-      // var result = []
-      // for (var i = 0; i < 9; i++) {
-      //   result.push({
-      //     //icon: markers[i].markerIcon,
-      //     name: body.trails[i].name,
-      //     rating: body.trails[i].stars,
-      //     url: body.trails[i].url,
-      //     difficulty: body.trails[i].difficulty,
-      //     elevGain: body.trails[i].ascent,
-      //     summary: body.trails[i].summary,
-      //     image: body.trails[i].imgSmall,
-      //     geometry: {
-      //       location: {
-      //         lat: parseFloat(body.trails[i].latitude),
-      //         lng: parseFloat(body.trails[i].longitude),
-      //       }
-      //     }
-      //   })
-      //   addResultTrail(result[i], i);
-      // }
-    })
+    // console.log("orig: "+ origin);
+    // console.log("dest: " + destination);
+    calcRoute(directionsService,directionsDisplay);
   })
 
   function getDirections(trip) {
@@ -174,26 +166,33 @@ $(document).ready(function() {
       origin = trip[0].place_id;
     } else {
       origin = trip[0].geometry.location.lat + ',' + trip[0].geometry.location.lng; }
-    console.log("origin: " + origin);
+    // console.log("origin: " + origin);
     if (trip.length > 2) {
-      for (var i = 1; i < trip[trip.length - 1]; i++) {
+      for (var i = 1; i < trip.length; i++) {
+        //for (var i in trip) {
         if (trip[i].hasOwnProperty('place_id')) {
-          waypoint[i] = trip[i].place_id;
-        } else {
-          waypoint[i] = trip[i].geometry.location.lat + ',' + trip[i].geometry.location.lng; }
-        //for i in waypoint
+          waypoint.push({
+            location: {'placeId': trip[i].place_id},
+            stopover: true
+          })
+        } 
+        else {
+            waypoint.push({
+              location: trip[i].geometry.location.lat + ',' + trip[i].geometry.location.lng,
+              stopover: true
+            })
+        }
       }
-      for (i in waypoint) {
-        console.log("waypoint: " + waypoint[i]);
-      }
+      console.log("waypoint" + JSON.stringify(waypoint));
+      //for (i in waypoint) {
+        //console.log("waypoint: " + waypoint[i]);
+      //}
     }
-
-
     if (trip[trip.length - 1].hasOwnProperty('place_id')) {
       destination = trip[trip.length - 1].place_id;
     } else {
       destination = trip[trip.length - 1].geometry.location.lat + ',' + trip[trip.length - 1].geometry.location.lng; }
-    console.log("dest: " + destination);
+    //console.log("dest: " + destination);
 
   }
 

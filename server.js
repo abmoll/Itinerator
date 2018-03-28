@@ -28,7 +28,6 @@ app.get('/apiDirections', function(req, res) {
 
 app.get('/apiTrail', function(req, res) {
   var trailUrl = `https://www.hikingproject.com/data/get-trails?lat=${req.query.lat}&lon=${req.query.lon}&maxDistance=10&key=200192113-0e12500ca3d4423414d88aaa658cda2e`
-  //var eventUrl = `http://api.eventful.com/json/events/search?app_key=pcXqHp3KG3jmtgNJ&keywords=${req.query.keywords}&location=${req.query.location}&date=${req.query.date}`
   request(trailUrl, function(err, response, body) {
     console.log("started API request");
     //console.log("req.query="+req.query);
