@@ -4,6 +4,7 @@ var express = require('express')
 var app = express()
 var bodyParser = require('body-parser')
 const request = require('request');
+var dirKey = 'AIzaSyBna-nft5cxYdVqD4vHCgurCqhi3B9zNhY';
 //var appKey = pcXqHp3KG3jmtgNJ
 app.use(express.static('./public'))
 
@@ -12,6 +13,18 @@ app.use(bodyParser.urlencoded({
 }))
 
 app.use(bodyParser.json())
+
+app.get('/apiDirections', function(req, res) {
+  var dirUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${req.query.origin}&destination=${req.query.destination}&key=${dirKey}`
+  //var eventUrl = `http://api.eventful.com/json/events/search?app_key=pcXqHp3KG3jmtgNJ&keywords=${req.query.keywords}&location=${req.query.location}&date=${req.query.date}`
+  request(dirUrl, function(err, response, body) {
+    console.log("started API request");
+    //console.log("req.query="+req.query);
+    //console.log(response)
+    //console.log(body)
+    res.send(body)
+  })
+})
 
 app.get('/apiTrail', function(req, res) {
   var trailUrl = `https://www.hikingproject.com/data/get-trails?lat=${req.query.lat}&lon=${req.query.lon}&maxDistance=10&key=200192113-0e12500ca3d4423414d88aaa658cda2e`

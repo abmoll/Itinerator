@@ -1,5 +1,5 @@
 //var GoogleMapsJsAPI = AIzaSyCOK8unHwKjh44byRIfMgAuRBpoH63_CqE
-//var GoogleMapsDirectionsAPI = AIzaSyBna-nft5cxYdVqD4vHCgurCqhi3B9zNhY
+//var dirKey = AIzaSyBna-nft5cxYdVqD4vHCgurCqhi3B9zNhY;
 //var GoogleMapsPlacesAPI = AIzaSyAGzhtIF6wqZ96WemXVfDdg3TerD_TYyiU
 //var eventfulKey = pcXqHp3KG3jmtgNJ
 //var API = http://api.eventful.com/json/events/search?...&location=San+Diego
@@ -22,6 +22,9 @@ var markers = [];
 var autocomplete;
 var trip = [];
 var tripIcons = [];
+var waypoint = [];
+var origin;
+var destination;
 var countryRestrict = {
   'country': 'us'
 };
@@ -122,7 +125,77 @@ var countries = {
     zoom: 5
   }
 };
+
 $(document).ready(function() {
+
+  $("#getDirections").click(function(event) {
+    //directions is an array of trip lat,lng
+    event.preventDefault();
+    //clearResults();
+    getDirections(trip);
+    // var place2 = autocomplete.getPlace();
+    // var latitude = place2.geometry.location.lat()
+    // var longitude = place2.geometry.location.lng()
+    console.log("orig: "+ origin);
+    console.log("dest: " + destination);
+
+    $.get(`/apiDirections?origin=${origin}&destination=${destination}`, function(body, status) {
+      //body = JSON.parse(body);
+      console.log("directions: " + body)
+      // this takes the lat/lng or placeId from trip array, calcs
+      // directions, then places them into results area
+      // var result = []
+      // for (var i = 0; i < 9; i++) {
+      //   result.push({
+      //     //icon: markers[i].markerIcon,
+      //     name: body.trails[i].name,
+      //     rating: body.trails[i].stars,
+      //     url: body.trails[i].url,
+      //     difficulty: body.trails[i].difficulty,
+      //     elevGain: body.trails[i].ascent,
+      //     summary: body.trails[i].summary,
+      //     image: body.trails[i].imgSmall,
+      //     geometry: {
+      //       location: {
+      //         lat: parseFloat(body.trails[i].latitude),
+      //         lng: parseFloat(body.trails[i].longitude),
+      //       }
+      //     }
+      //   })
+      //   addResultTrail(result[i], i);
+      // }
+    })
+  })
+
+  function getDirections(trip) {
+    //var url = 'https://maps.googleapis.com/maps/api/directions/json?origin=Disneyland&destination=Universal+Studios+Hollywood4&key=${dirKey}';
+    // iterate through the trip array to get lat/lng or place id
+    if (trip[0].hasOwnProperty('place_id')) {
+      origin = trip[0].place_id;
+    } else {
+      origin = trip[0].geometry.location.lat + ',' + trip[0].geometry.location.lng; }
+    console.log("origin: " + origin);
+    if (trip.length > 2) {
+      for (var i = 1; i < trip[trip.length - 1]; i++) {
+        if (trip[i].hasOwnProperty('place_id')) {
+          waypoint[i] = trip[i].place_id;
+        } else {
+          waypoint[i] = trip[i].geometry.location.lat + ',' + trip[i].geometry.location.lng; }
+        //for i in waypoint
+      }
+      for (i in waypoint) {
+        console.log("waypoint: " + waypoint[i]);
+      }
+    }
+
+
+    if (trip[trip.length - 1].hasOwnProperty('place_id')) {
+      destination = trip[trip.length - 1].place_id;
+    } else {
+      destination = trip[trip.length - 1].geometry.location.lat + ',' + trip[trip.length - 1].geometry.location.lng; }
+    console.log("dest: " + destination);
+
+  }
 
   // pop-up window for a place
   infoWindow = new google.maps.InfoWindow({
@@ -221,64 +294,65 @@ $(document).ready(function() {
     };
   }
 
-    // if user selects Display Trip, display the trip array on results panel
-    $("#displayTrip").click(function(event) {
-      event.preventDefault();
-      clearResults();
-      //trip is an array of all results
-      for (var i = 0; i < trip.length; i++) {
-        addResultTrip(trip,i);
-      }
-    })
-
-    function addResultTrip(trip, i) {
-      // addResultTrip adds the entire trip array to the results div
-      // it needs some info from each of the places, events, and trails methods
-      // it should retain the result array, marker letter and icon set from those functions
-      var results = document.getElementById('results');
-      var tr = document.createElement('tr');
-      tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
-      if (trip[i].hasOwnProperty('start_time')) 
-        var isEvent = true;
-
-      // create blank cells
-      var iconTd = document.createElement('td');
-      var nameTd = document.createElement('td');
-      if (isEvent) 
-        var dateTd = document.createElement('td');
-      else
-        var ratingTd = document.createElement('td');
-
-      //create attibutes of the icon
-      var icon = document.createElement('img');
-      icon.src = tripIcons[i];
-      icon.setAttribute('class', 'placeIcon');
-      icon.setAttribute('className', 'placeIcon');
-      
-      var name = document.createTextNode(trip[i].name);
-      if (isEvent) 
-        var date = document.createTextNode(trip[i].start_time);
-      else
-        var rating = document.createTextNode("\nRating: " + trip[i].rating);
-
-      // add data to cells
-      iconTd.appendChild(icon);
-      nameTd.appendChild(name);
-      if (isEvent) 
-        dateTd.appendChild(date);
-      else 
-        ratingTd.appendChild(rating);
-
-      // add cells to rows
-      tr.appendChild(iconTd);
-      tr.appendChild(nameTd);
-      if (isEvent) 
-        tr.appendChild(dateTd);
-      else
-        tr.appendChild(ratingTd);
-
-      results.appendChild(tr);
+  // if user selects Display Trip, display the trip array on results panel
+  $("#displayTrip").click(function(event) {
+    event.preventDefault();
+    clearResults();
+    //trip is an array of all results
+    for (var i = 0; i < trip.length; i++) {
+      addResultTrip(trip, i);
     }
+    console.log(trip);
+  })
+
+  function addResultTrip(trip, i) {
+    // addResultTrip adds the entire trip array to the results div
+    // it needs some info from each of the places, events, and trails methods
+    // it should retain the result array, marker letter and icon set from those functions
+    var results = document.getElementById('results');
+    var tr = document.createElement('tr');
+    tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
+    if (trip[i].hasOwnProperty('start_time'))
+      var isEvent = true;
+
+    // create blank cells
+    var iconTd = document.createElement('td');
+    var nameTd = document.createElement('td');
+    if (isEvent)
+      var dateTd = document.createElement('td');
+    else
+      var ratingTd = document.createElement('td');
+
+    //create attibutes of the icon
+    var icon = document.createElement('img');
+    icon.src = tripIcons[i];
+    icon.setAttribute('class', 'placeIcon');
+    icon.setAttribute('className', 'placeIcon');
+
+    var name = document.createTextNode(trip[i].name);
+    if (isEvent)
+      var date = document.createTextNode(trip[i].start_time);
+    else
+      var rating = document.createTextNode("\nRating: " + trip[i].rating);
+
+    // add data to cells
+    iconTd.appendChild(icon);
+    nameTd.appendChild(name);
+    if (isEvent)
+      dateTd.appendChild(date);
+    else
+      ratingTd.appendChild(rating);
+
+    // add cells to rows
+    tr.appendChild(iconTd);
+    tr.appendChild(nameTd);
+    if (isEvent)
+      tr.appendChild(dateTd);
+    else
+      tr.appendChild(ratingTd);
+
+    results.appendChild(tr);
+  }
 
   // if user selects trail from drop down
   $("#trailForm").submit(function(event) {
@@ -326,7 +400,7 @@ $(document).ready(function() {
     //console.log(location)
     var keyword = $("#eventType option:selected").text()
     var date = $("#eventTime option:selected").text()
-    
+
     $.get(`/apiEvent?keywords=${keyword}&location=${location}&date=${date}`, function(body, status) {
       body = JSON.parse(body);
       //console.log(body)
@@ -353,7 +427,7 @@ $(document).ready(function() {
       }
     })
   })
-  
+
   function addResult(result, i) {
     var results = document.getElementById('results');
     var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
@@ -408,15 +482,15 @@ $(document).ready(function() {
   function showInfoWindow() {
     var marker = this;
     places.getDetails({
-      placeId: marker.placeResult.place_id
-    },
-    function(place, status) {
-      if (status !== google.maps.places.PlacesServiceStatus.OK) {
-        return;
-      }
-      infoWindow.open(map, marker);
-      buildIWContent(place);
-    });
+        placeId: marker.placeResult.place_id
+      },
+      function(place, status) {
+        if (status !== google.maps.places.PlacesServiceStatus.OK) {
+          return;
+        }
+        infoWindow.open(map, marker);
+        buildIWContent(place);
+      });
   }
 
   function addResultEvent(result, i) {
