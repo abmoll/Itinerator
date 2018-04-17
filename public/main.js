@@ -12,6 +12,9 @@ var tripIcons = [];
 var waypoint = [];
 var origin;
 var destination;
+var oPlaceId;
+var dPlaceId;
+var request = {};
 var countryRestrict = {
   'country': 'us'
 };
@@ -126,21 +129,71 @@ function initMap() {
   directionsDisplay.setMap(map);
   directionsDisplay.setPanel(document.getElementById('listing'));
 }
-    
+
+// function calcRoute(directionsService,directionsDisplay) {
+//       var start = origin;
+//       var end = destination;
+//       var request = {
+//         origin: start,
+//         destination: end,
+//         waypoints: waypoint,
+//         travelMode: 'DRIVING'
+//       };
+//       directionsService.route(request, function(result, status) {
+//         if (status == 'OK') {
+//           directionsDisplay.setDirections(result);
+//     }
+//   });
+// }
+
 function calcRoute(directionsService,directionsDisplay) {
-      var start = origin;
-      var end = destination;
-      var request = {
-        origin: start,
-        destination: end,
-        waypoints: waypoint,
-        travelMode: 'DRIVING'
-      };
+    if (oPlaceId == true && dPlaceId == true) {
+          request = {
+            origin: {
+              'placeId': origin
+            },
+            destination: {
+              'placeId': destination
+            },
+            waypoints: waypoint,
+            travelMode: 'DRIVING'
+          };
+    }
+
+    if (oPlaceId == true && dPlaceId == false) {
+          request = {
+            origin: {
+              'placeId': origin
+            },
+            destination: destination,
+            waypoints: waypoint,
+            travelMode: 'DRIVING'
+          };
+    }
+    if (oPlaceId == false && dPlaceId == true) {
+          request = {
+            origin: origin,
+            destination: {
+              'placeId': destination
+            },
+            waypoints: waypoint,
+            travelMode: 'DRIVING'
+          };
+    }
+    if (oPlaceId == false && dPlaceId == false) {
+          request = {
+            origin: origin,
+            destination: destination,
+            waypoints: waypoint,
+            travelMode: 'DRIVING'
+          };
+    }
+
       directionsService.route(request, function(result, status) {
         if (status == 'OK') {
           directionsDisplay.setDirections(result);
-    }
-  });
+        }
+      });
 }
 
 
@@ -156,6 +209,7 @@ $(document).ready(function() {
     // var longitude = place2.geometry.location.lng()
     // console.log("orig: "+ origin);
     // console.log("dest: " + destination);
+    clearMarkers();
     calcRoute(directionsService,directionsDisplay);
   })
 
@@ -163,36 +217,46 @@ $(document).ready(function() {
     //var url = 'https://maps.googleapis.com/maps/api/directions/json?origin=Disneyland&destination=Universal+Studios+Hollywood4&key=${dirKey}';
     // iterate through the trip array to get lat/lng or place id
     if (trip[0].hasOwnProperty('place_id')) {
+      //origin = "place_id:" + trip[0].place_id;
       origin = trip[0].place_id;
+      oPlaceId = true;
+      //request.origin = {'placeId': origin };
     } else {
-      origin = trip[0].geometry.location.lat + ',' + trip[0].geometry.location.lng; }
-    // console.log("origin: " + origin);
+        origin = trip[0].geometry.location.lat + ',' + trip[0].geometry.location.lng;
+        oPlaceId = false;
+      }
+      console.log("origin: " + origin);
+
     if (trip.length > 2) {
-      for (var i = 1; i < trip.length; i++) {
+      for (var i = 1; i < trip.length-1; i++) {
         //for (var i in trip) {
         if (trip[i].hasOwnProperty('place_id')) {
           waypoint.push({
             location: {'placeId': trip[i].place_id},
             stopover: true
           })
-        } 
+        }
         else {
             waypoint.push({
               location: trip[i].geometry.location.lat + ',' + trip[i].geometry.location.lng,
               stopover: true
             })
+            console.log("waypoint: " + waypoint);
         }
       }
-      console.log("waypoint" + JSON.stringify(waypoint));
+      console.log("waypoint: " + JSON.stringify(waypoint));
       //for (i in waypoint) {
         //console.log("waypoint: " + waypoint[i]);
       //}
     }
     if (trip[trip.length - 1].hasOwnProperty('place_id')) {
       destination = trip[trip.length - 1].place_id;
+      dPlaceId = true;
     } else {
-      destination = trip[trip.length - 1].geometry.location.lat + ',' + trip[trip.length - 1].geometry.location.lng; }
-    //console.log("dest: " + destination);
+      destination = trip[trip.length - 1].geometry.location.lat + ',' + trip[trip.length - 1].geometry.location.lng;
+      dPlaceId = false;
+      }
+    console.log("dest: " + destination);
 
   }
 
@@ -256,11 +320,11 @@ $(document).ready(function() {
 
   function clearMarkers() {
     for (var i = 0; i < markers.length; i++) {
-      if (markers[i]) {
+    //  if (markers[i]) {
         markers[i].setMap(null);
-      }
+    //  }
     }
-    markers = [];
+    markers.length = 0;
   }
 
   // Set the country restriction based on user input.
