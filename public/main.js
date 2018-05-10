@@ -15,6 +15,7 @@ var destination;
 var oPlaceId;
 var dPlaceId;
 var request = {};
+var mode;
 var countryRestrict = {
   'country': 'us'
 };
@@ -147,6 +148,7 @@ function initMap() {
 // }
 
 function calcRoute(directionsService,directionsDisplay) {
+   
     if (oPlaceId == true && dPlaceId == true) {
           request = {
             origin: {
@@ -156,7 +158,8 @@ function calcRoute(directionsService,directionsDisplay) {
               'placeId': destination
             },
             waypoints: waypoint,
-            travelMode: 'DRIVING'
+            travelMode: mode
+            // dirType.value toUpperCase() document.getElementById('dirType').text
           };
     }
 
@@ -167,7 +170,7 @@ function calcRoute(directionsService,directionsDisplay) {
             },
             destination: destination,
             waypoints: waypoint,
-            travelMode: 'DRIVING'
+            travelMode: mode
           };
     }
     if (oPlaceId == false && dPlaceId == true) {
@@ -177,7 +180,7 @@ function calcRoute(directionsService,directionsDisplay) {
               'placeId': destination
             },
             waypoints: waypoint,
-            travelMode: 'DRIVING'
+            travelMode: mode
           };
     }
     if (oPlaceId == false && dPlaceId == false) {
@@ -185,7 +188,7 @@ function calcRoute(directionsService,directionsDisplay) {
             origin: origin,
             destination: destination,
             waypoints: waypoint,
-            travelMode: 'DRIVING'
+            travelMode: mode
           };
     }
 
@@ -194,14 +197,18 @@ function calcRoute(directionsService,directionsDisplay) {
           directionsDisplay.setDirections(result);
         }
       });
+    
 }
-
 
 $(document).ready(function() {
 
   $("#getDirections").click(function(event) {
     //directions is an array of trip lat,lng
     event.preventDefault();
+    var x = $("#dirType option:selected").text();
+    mode = x.toUpperCase();
+
+   if (mode =="WALKING" || mode =="DRIVING") {
     clearResults();
     getDirections(trip);
     // var place2 = autocomplete.getPlace();
@@ -211,6 +218,8 @@ $(document).ready(function() {
     // console.log("dest: " + destination);
     clearMarkers();
     calcRoute(directionsService,directionsDisplay);
+   }
+    else {alert("Please select travel mode")}
   })
 
   function getDirections(trip) {
@@ -320,10 +329,11 @@ $(document).ready(function() {
 
   function clearMarkers() {
     for (var i = 0; i < markers.length; i++) {
-    //  if (markers[i]) {
-        markers[i].setMap(null);
-    //  }
+      if (markers[i]) {
+          markers[i].setMap(null);
+      }
     }
+    markers = [];
     markers.length = 0;
   }
 
@@ -385,6 +395,7 @@ $(document).ready(function() {
       var dateTd = document.createElement('td');
     else
       var ratingTd = document.createElement('td');
+      var delTd = document.createElement('td');
 
     //create attibutes of the icon
     var icon = document.createElement('img');
@@ -397,6 +408,9 @@ $(document).ready(function() {
       var date = document.createTextNode(trip[i].start_time);
     else
       var rating = document.createTextNode("\nRating: " + trip[i].rating);
+      var delButton = document.createElement("delButton");
+      delButton.innerHTML = "X";
+   
 
     // add data to cells
     iconTd.appendChild(icon);
@@ -405,6 +419,7 @@ $(document).ready(function() {
       dateTd.appendChild(date);
     else
       ratingTd.appendChild(rating);
+      delTd.appendChild(delButton);
 
     // add cells to rows
     tr.appendChild(iconTd);
@@ -413,6 +428,13 @@ $(document).ready(function() {
       tr.appendChild(dateTd);
     else
       tr.appendChild(ratingTd);
+      tr.appendChild(delTd);
+
+    delButton.addEventListener ("click", function() {
+      alert("did something on "+ trip[i].name)
+      //trip.splice(i)
+      //remove marker[i]
+    });
 
     results.appendChild(tr);
   }
