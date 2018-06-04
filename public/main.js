@@ -318,7 +318,8 @@ $(document).ready(function() {
         //clearMarkers();
         // Create a marker for each place found, and
         // assign a letter of the alphabetic to each marker icon.
-        for (var i = 0; i < 13; i++) {
+        var maxResults = 13;
+        for (var i = 0; i < maxResults; i++) {
           var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
           var markerIcon = MARKER_PATH + markerLetter + '.png';
           addResult(results[i], i);
@@ -395,7 +396,7 @@ $(document).ready(function() {
       var dateTd = document.createElement('td');
     else
       var ratingTd = document.createElement('td');
-      var delTd = document.createElement('td');
+    var delTd = document.createElement('td');
 
     //create attibutes of the icon
     var icon = document.createElement('img');
@@ -408,9 +409,24 @@ $(document).ready(function() {
       var date = document.createTextNode(trip[i].start_time);
     else
       var rating = document.createTextNode("\nRating: " + trip[i].rating);
+
       var delButton = document.createElement("delButton");
-      delButton.innerHTML = "X";
-   
+      var txt = document.createTextNode("X");
+      delButton.appendChild(txt);
+      
+      delButton.onclick = function(){
+          alert("removed " + trip[i].name);
+          //remove element clicked on and remove its marker 
+          trip.splice(i,1);
+          console.log(JSON.stringify(trip));
+          //console.log(markers[i]);
+          console.log("icon: " + JSON.stringify(icon));
+          tripIcons.splice(i,1);
+          markers.splice(i,1);
+          //console.log("markers[i]:" + JSON.stringify(markers[i]));
+          //tripIcons[i].setMap(null);
+          console.log(JSON.stringify(tripIcons));
+    };
 
     // add data to cells
     iconTd.appendChild(icon);
@@ -419,6 +435,7 @@ $(document).ready(function() {
       dateTd.appendChild(date);
     else
       ratingTd.appendChild(rating);
+
       delTd.appendChild(delButton);
 
     // add cells to rows
@@ -428,16 +445,17 @@ $(document).ready(function() {
       tr.appendChild(dateTd);
     else
       tr.appendChild(ratingTd);
+
       tr.appendChild(delTd);
+      results.appendChild(tr);
 
-    delButton.addEventListener ("click", function() {
-      alert("did something on "+ trip[i].name)
-      //trip.splice(i)
-      //remove marker[i]
-    });
+ 
 
-    results.appendChild(tr);
   }
+
+    //delButton.addEventListener ("click", delTripRes() {
+
+
 
   // if user selects trail from drop down
   $("#trailForm").submit(function(event) {
