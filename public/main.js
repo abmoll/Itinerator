@@ -4,6 +4,7 @@
 //var eventfulKey = pcXqHp3KG3jmtgNJ
 //var API = http://api.eventful.com/json/events/search?...&location=San+Diego
 //var hikingProjectAPI = 200192113-0e12500ca3d4423414d88aaa658cda2e
+//var calcRoute = require('./calcRoute');
 var map, places, infoWindow;
 var markers = [];
 var autocomplete;
@@ -148,7 +149,7 @@ function initMap() {
 // }
 
 function calcRoute(directionsService,directionsDisplay) {
-   
+
     if (oPlaceId == true && dPlaceId == true) {
           request = {
             origin: {
@@ -197,7 +198,7 @@ function calcRoute(directionsService,directionsDisplay) {
           directionsDisplay.setDirections(result);
         }
       });
-    
+
 }
 
 $(document).ready(function() {
@@ -368,16 +369,16 @@ $(document).ready(function() {
     };
   }
 
-  // if user selects Display Trip, display the trip array on results panel
-  $("#displayTrip").click(function(event) {
-    event.preventDefault();
+  $("#displayTrip").on('click', displayTrip);
+
+  function displayTrip(){
     clearResults();
     //trip is an array of all results
     for (var i = 0; i < trip.length; i++) {
       addResultTrip(trip, i);
     }
-    console.log(trip);
-  })
+    //console.log(trip);
+  }
 
   function addResultTrip(trip, i) {
     // addResultTrip adds the entire trip array to the results div
@@ -397,6 +398,7 @@ $(document).ready(function() {
     else
       var ratingTd = document.createElement('td');
     var delTd = document.createElement('td');
+    delTd.style.padding = '4px';
 
     //create attibutes of the icon
     var icon = document.createElement('img');
@@ -410,19 +412,27 @@ $(document).ready(function() {
     else
       var rating = document.createTextNode("\nRating: " + trip[i].rating);
 
+      // delete button
       var delButton = document.createElement("delButton");
-      var txt = document.createTextNode("X");
-      delButton.appendChild(txt);
-      
-      delButton.onclick = function(){
+      var img = document.createElement('img');
+      img.style.width = '14px';
+      img.style.height = '14px';
+      img.src = "./img/deleteButton.png";
+      delButton.appendChild(img);
+
+      delButton.onclick = delResult;
+
+      function delResult(event){
+          event.preventDefault();
           alert("removed " + trip[i].name);
-          //remove element clicked on and remove its marker 
+          //remove element clicked on and remove its marker
           trip.splice(i,1);
           console.log(JSON.stringify(trip));
           //console.log(markers[i]);
           console.log("icon: " + JSON.stringify(icon));
           tripIcons.splice(i,1);
           markers.splice(i,1);
+          displayTrip();
           //console.log("markers[i]:" + JSON.stringify(markers[i]));
           //tripIcons[i].setMap(null);
           console.log(JSON.stringify(tripIcons));
@@ -436,7 +446,7 @@ $(document).ready(function() {
     else
       ratingTd.appendChild(rating);
 
-      delTd.appendChild(delButton);
+    delTd.appendChild(delButton);
 
     // add cells to rows
     tr.appendChild(iconTd);
@@ -449,14 +459,9 @@ $(document).ready(function() {
       tr.appendChild(delTd);
       results.appendChild(tr);
 
- 
-
   }
 
     //delButton.addEventListener ("click", delTripRes() {
-
-
-
   // if user selects trail from drop down
   $("#trailForm").submit(function(event) {
     //if ($("#placeType option:selected").text() == "trail") {
