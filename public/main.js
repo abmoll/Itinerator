@@ -210,26 +210,34 @@ $(document).ready(function() {
     mode = x.toUpperCase();
 
    if (mode =="WALKING" || mode =="DRIVING") {
-    clearResults();
+
     getDirections(trip);
+    clearResults();
+    clearMarkers();
     // var place2 = autocomplete.getPlace();
     // var latitude = place2.geometry.location.lat()
     // var longitude = place2.geometry.location.lng()
     // console.log("orig: "+ origin);
     // console.log("dest: " + destination);
-    clearMarkers();
     calcRoute(directionsService,directionsDisplay);
+
    }
     else {alert("Please select travel mode")}
+
   })
 
   function getDirections(trip) {
     //var url = 'https://maps.googleapis.com/maps/api/directions/json?origin=Disneyland&destination=Universal+Studios+Hollywood4&key=${dirKey}';
     // iterate through the trip array to get lat/lng or place id
+    clearMarkers();
+    console.log("trip: " + JSON.stringify(trip));
+    console.log("tripIcons: " +  tripIcons);
+
     if (trip[0].hasOwnProperty('place_id')) {
       //origin = "place_id:" + trip[0].place_id;
       origin = trip[0].place_id;
       oPlaceId = true;
+      waypoint = [];
       //request.origin = {'placeId': origin };
     } else {
         origin = trip[0].geometry.location.lat + ',' + trip[0].geometry.location.lng;
@@ -251,7 +259,7 @@ $(document).ready(function() {
               location: trip[i].geometry.location.lat + ',' + trip[i].geometry.location.lng,
               stopover: true
             })
-            console.log("waypoint: " + waypoint);
+            //console.log("waypoint: " + waypoint);
         }
       }
       console.log("waypoint: " + JSON.stringify(waypoint));
@@ -331,9 +339,10 @@ $(document).ready(function() {
 
   function clearMarkers() {
     for (var i = 0; i < markers.length; i++) {
-      if (markers[i]) {
+       if (markers[i] !== null) {
+          markers[i].icon = null;
           markers[i].setMap(null);
-      }
+       }
     }
     markers = [];
     markers.length = 0;
@@ -369,10 +378,26 @@ $(document).ready(function() {
     };
   }
 
+  function removeMarker(i){
+    //console.log("markers[i]: " + JSON.stringify(markers[i]));
+      return function() {
+        markers[i].icon = null;
+        markers[i].setMap(null);
+        //markers[i] = null;
+      };
+  }
+
+  function displayMarkers(){
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(map);
+    }
+  }
+
   $("#displayTrip").on('click', displayTrip);
 
   function displayTrip(){
     clearResults();
+
     //trip is an array of all results
     for (var i = 0; i < trip.length; i++) {
       addResultTrip(trip, i);
@@ -422,22 +447,6 @@ $(document).ready(function() {
 
       delButton.onclick = delResult;
 
-      function delResult(event){
-          event.preventDefault();
-          alert("removed " + trip[i].name);
-          //remove element clicked on and remove its marker
-          trip.splice(i,1);
-          console.log(JSON.stringify(trip));
-          //console.log(markers[i]);
-          console.log("icon: " + JSON.stringify(icon));
-          tripIcons.splice(i,1);
-          markers.splice(i,1);
-          displayTrip();
-          //console.log("markers[i]:" + JSON.stringify(markers[i]));
-          //tripIcons[i].setMap(null);
-          console.log(JSON.stringify(tripIcons));
-    };
-
     // add data to cells
     iconTd.appendChild(icon);
     nameTd.appendChild(name);
@@ -459,6 +468,26 @@ $(document).ready(function() {
       tr.appendChild(delTd);
       results.appendChild(tr);
 
+
+      function delResult(){
+          //event.preventDefault();
+          console.log("WP removed: " +  JSON.stringify(waypoint[i]));
+          alert("removed " + trip[i].name);
+          //remove element clicked on and remove its marker
+          trip.splice(i,1);
+          //console.log(markers[i]);
+          tripIcons.splice(i,1);
+          waypoint.splice(i,1);
+          console.log("WPs aftah: " + JSON.stringify(waypoint))
+          //console.log("before - markers:" + JSON.stringify(markers));
+          //markers.splice(i,1);
+          removeMarker(i);
+          //displayMarkers();
+          displayTrip();
+          //console.log("after - markers:" + JSON.stringify(markers));
+          //tripIcons[i].setMap(null);
+          //console.log(JSON.stringify(tripIcons));
+    };
   }
 
     //delButton.addEventListener ("click", delTripRes() {
@@ -548,6 +577,7 @@ $(document).ready(function() {
     tr.onclick = function(evt) {
       //console.log("evt: ", evt)
       //google.maps.event.trigger(markers[i], 'click');
+      // displayMarker on map
       markers[i] = new google.maps.Marker({
         position: result.geometry.location,
         animation: google.maps.Animation.DROP,
@@ -557,6 +587,7 @@ $(document).ready(function() {
       // Add the result to the trip array
       trip.push(result);
       tripIcons.push(markerIcon);
+      //console.log("markers: " + JSON.stringify(markers));
 
       setTimeout(dropMarker(i), i * 100);
       // If the user clicks a marker, show the details of that marker in info window
@@ -602,8 +633,7 @@ $(document).ready(function() {
   }
 
   function addResultEvent(result, i) {
-
-    var markerLetter = String.fromCharCode('a'.charCodeAt(0) + (i % 26));
+    var markerLetter = String.fromCharCode('a'.charCodeAt(0) + (i % 26)); //if event
     //var markerIcon = MARKER_URL + markerLetter + '.png';
     var markerIcon = `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=${markerLetter}|FE7569`
     var tr = document.createElement('tr');
@@ -624,8 +654,7 @@ $(document).ready(function() {
       // when result is added to map, also push it to trip array
       trip.push(result);
       tripIcons.push(markerIcon);
-
-      google.maps.event.addListener(markers[i], 'click', showInfoWindowEvent);
+      google.maps.event.addListener(markers[i], 'click', showInfoWindowEvent); //if event
       setTimeout(dropMarker(i), i * 100);
     };
 
@@ -640,7 +669,7 @@ $(document).ready(function() {
     // places data into results column
     var iconTd = document.createElement('td');
     var nameTd = document.createElement('td');
-    var dateTd = document.createElement('td');
+    var dateTd = document.createElement('td'); //if event
 
     var icon = document.createElement('img');
     icon.src = markerIcon;
@@ -648,15 +677,15 @@ $(document).ready(function() {
     icon.setAttribute('className', 'placeIcon');
 
     var name = document.createTextNode(result.name);
-    var date = document.createTextNode("\nDate: " + result.start_time);
+    var date = document.createTextNode("\nDate: " + result.start_time); //if event
 
     iconTd.appendChild(icon);
     nameTd.appendChild(name);
-    nameTd.appendChild(date);
+    nameTd.appendChild(date); //if event
 
     tr.appendChild(iconTd);
     tr.appendChild(nameTd);
-    tr.appendChild(dateTd);
+    tr.appendChild(dateTd); //if event
 
     results.appendChild(tr);
   }
