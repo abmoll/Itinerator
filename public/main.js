@@ -132,76 +132,60 @@ function initMap() {
   directionsDisplay.setPanel(document.getElementById('listing'));
 }
 
-// function calcRoute(directionsService,directionsDisplay) {
-//       var start = origin;
-//       var end = destination;
-//       var request = {
-//         origin: start,
-//         destination: end,
-//         waypoints: waypoint,
-//         travelMode: 'DRIVING'
-//       };
-//       directionsService.route(request, function(result, status) {
-//         if (status == 'OK') {
-//           directionsDisplay.setDirections(result);
-//     }
-//   });
-// }
-
-function calcRoute(directionsService,directionsDisplay) {
-
-    if (oPlaceId == true && dPlaceId == true) {
-          request = {
-            origin: {
-              'placeId': origin
-            },
-            destination: {
-              'placeId': destination
-            },
-            waypoints: waypoint,
-            travelMode: mode
-            // dirType.value toUpperCase() document.getElementById('dirType').text
-          };
-    }
-
-    if (oPlaceId == true && dPlaceId == false) {
-          request = {
-            origin: {
-              'placeId': origin
-            },
-            destination: destination,
-            waypoints: waypoint,
-            travelMode: mode
-          };
-    }
-    if (oPlaceId == false && dPlaceId == true) {
-          request = {
-            origin: origin,
-            destination: {
-              'placeId': destination
-            },
-            waypoints: waypoint,
-            travelMode: mode
-          };
-    }
-    if (oPlaceId == false && dPlaceId == false) {
-          request = {
-            origin: origin,
-            destination: destination,
-            waypoints: waypoint,
-            travelMode: mode
-          };
-    }
-
-      directionsService.route(request, function(result, status) {
-        if (status == 'OK') {
-          directionsDisplay.setDirections(result);
-        }
-      });
-
-}
-
 $(document).ready(function() {
+
+  function calcRoute(directionsService,directionsDisplay) {
+
+      if (oPlaceId == true && dPlaceId == true) {
+            request = {
+              origin: {
+                'placeId': origin
+              },
+              destination: {
+                'placeId': destination
+              },
+              waypoints: waypoint,
+              travelMode: mode
+              // dirType.value toUpperCase() document.getElementById('dirType').text
+            };
+      }
+
+      if (oPlaceId == true && dPlaceId == false) {
+            request = {
+              origin: {
+                'placeId': origin
+              },
+              destination: destination,
+              waypoints: waypoint,
+              travelMode: mode
+            };
+      }
+      if (oPlaceId == false && dPlaceId == true) {
+            request = {
+              origin: origin,
+              destination: {
+                'placeId': destination
+              },
+              waypoints: waypoint,
+              travelMode: mode
+            };
+      }
+      if (oPlaceId == false && dPlaceId == false) {
+            request = {
+              origin: origin,
+              destination: destination,
+              waypoints: waypoint,
+              travelMode: mode
+            };
+      }
+
+        directionsService.route(request, function(result, status) {
+          if (status == 'OK') {
+            directionsDisplay.setDirections(result);
+          }
+        });
+
+  }
 
   $("#getDirections").click(function(event) {
     //directions is an array of trip lat,lng
@@ -210,17 +194,14 @@ $(document).ready(function() {
     mode = x.toUpperCase();
 
    if (mode =="WALKING" || mode =="DRIVING") {
-
-    getDirections(trip);
+    console.log("mark01: " + markers);
+    //clearMarkers();
     clearResults();
-    clearMarkers();
+    getDirections(trip);
     // var place2 = autocomplete.getPlace();
     // var latitude = place2.geometry.location.lat()
     // var longitude = place2.geometry.location.lng()
-    // console.log("orig: "+ origin);
-    // console.log("dest: " + destination);
     calcRoute(directionsService,directionsDisplay);
-
    }
     else {alert("Please select travel mode")}
 
@@ -229,21 +210,20 @@ $(document).ready(function() {
   function getDirections(trip) {
     //var url = 'https://maps.googleapis.com/maps/api/directions/json?origin=Disneyland&destination=Universal+Studios+Hollywood4&key=${dirKey}';
     // iterate through the trip array to get lat/lng or place id
-    clearMarkers();
-    console.log("trip: " + JSON.stringify(trip));
-    console.log("tripIcons: " +  tripIcons);
+    waypoint = [];
+    //console.log("tripIcons: " +  tripIcons);
 
     if (trip[0].hasOwnProperty('place_id')) {
       //origin = "place_id:" + trip[0].place_id;
       origin = trip[0].place_id;
       oPlaceId = true;
-      waypoint = [];
+
       //request.origin = {'placeId': origin };
     } else {
         origin = trip[0].geometry.location.lat + ',' + trip[0].geometry.location.lng;
         oPlaceId = false;
       }
-      console.log("origin: " + origin);
+      //console.log("origin: " + origin);
 
     if (trip.length > 2) {
       for (var i = 1; i < trip.length-1; i++) {
@@ -262,7 +242,7 @@ $(document).ready(function() {
             //console.log("waypoint: " + waypoint);
         }
       }
-      console.log("waypoint: " + JSON.stringify(waypoint));
+      //console.log("waypoint: " + JSON.stringify(waypoint));
       //for (i in waypoint) {
         //console.log("waypoint: " + waypoint[i]);
       //}
@@ -340,8 +320,9 @@ $(document).ready(function() {
   function clearMarkers() {
     for (var i = 0; i < markers.length; i++) {
        if (markers[i] !== null) {
-          markers[i].icon = null;
+          //markers[i].icon = null;
           markers[i].setMap(null);
+          //markers[i].hidden = true;
        }
     }
     markers = [];
@@ -382,7 +363,10 @@ $(document).ready(function() {
     //console.log("markers[i]: " + JSON.stringify(markers[i]));
       return function() {
         markers[i].icon = null;
+        markers[i].visible = false;
         markers[i].setMap(null);
+
+        //markerIcon = null;
         //markers[i] = null;
       };
   }
@@ -397,7 +381,6 @@ $(document).ready(function() {
 
   function displayTrip(){
     clearResults();
-
     //trip is an array of all results
     for (var i = 0; i < trip.length; i++) {
       addResultTrip(trip, i);
@@ -444,8 +427,11 @@ $(document).ready(function() {
       img.style.height = '14px';
       img.src = "./img/deleteButton.png";
       delButton.appendChild(img);
-
-      delButton.onclick = delResult;
+      console.log("mark: " + markers[i])
+      //delButton.onclick = delResult;
+      delButton.onclick = function(){
+        delResult();
+      }
 
     // add data to cells
     iconTd.appendChild(icon);
@@ -471,13 +457,16 @@ $(document).ready(function() {
 
       function delResult(){
           //event.preventDefault();
+
           console.log("WP removed: " +  JSON.stringify(waypoint[i]));
           alert("removed " + trip[i].name);
+          console.log("this.markers[i]: " + JSON.stringify(this.markers[i])); //markers is undefined
           //remove element clicked on and remove its marker
           trip.splice(i,1);
           //console.log(markers[i]);
           tripIcons.splice(i,1);
           waypoint.splice(i,1);
+          markers[i].visible = false;
           console.log("WPs aftah: " + JSON.stringify(waypoint))
           //console.log("before - markers:" + JSON.stringify(markers));
           //markers.splice(i,1);
@@ -488,7 +477,7 @@ $(document).ready(function() {
           //tripIcons[i].setMap(null);
           //console.log(JSON.stringify(tripIcons));
     };
-  }
+}
 
     //delButton.addEventListener ("click", delTripRes() {
   // if user selects trail from drop down
@@ -566,12 +555,12 @@ $(document).ready(function() {
   })
 
   function addResult(result, i) {
+
     var results = document.getElementById('results');
     var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
     var markerIcon = MARKER_PATH + markerLetter + '.png';
     var tr = document.createElement('tr');
     tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
-
     // when user clicks on result, add it to map
     // new - also, push the result into a trip array
     tr.onclick = function(evt) {
@@ -584,6 +573,7 @@ $(document).ready(function() {
         icon: markerIcon
       });
       markers[i].placeResult = result;
+      console.log("markers[i]: " + JSON.stringify(markers[i]));
       // Add the result to the trip array
       trip.push(result);
       tripIcons.push(markerIcon);
@@ -614,6 +604,7 @@ $(document).ready(function() {
     tr.appendChild(nameTd);
     tr.appendChild(ratingTd);
     results.appendChild(tr);
+    //return markers;
   }
 
   // Get the place details for a place. Show the information in an info window,
