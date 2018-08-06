@@ -5,7 +5,7 @@
 //var API = http://api.eventful.com/json/events/search?...&location=San+Diego
 //var hikingProjectAPI = 200192113-0e12500ca3d4423414d88aaa658cda2e
 //var calcRoute = require('./calcRoute')
-
+//var countries = require('./countries');
 var map, places, infoWindow;
 var index = 0;
 var markers = [];
@@ -138,8 +138,18 @@ function initMap() {
 
 $(document).ready(function() {
 
+//   $('.panel-heading').hover(
+//  function() {
+//     $('.panel-collapse').collapse('show');
+//   }, function() {
+//     $('.panel-collapse').collapse('hide');
+//   }
+// );
+
   function calcRoute(directionsService,directionsDisplay) {
 
+
+      // define the request for directionsService
       if (oPlaceId == true && dPlaceId == true) {
             request = {
               origin: {
@@ -184,26 +194,36 @@ $(document).ready(function() {
       }
 
         directionsService.route(request, function(result, status) {
-          if (status == 'OK') {
-            directionsDisplay.setDirections(result);
-          }
-        });
 
+          if (status == 'OK') {
+              directionsDisplay.setDirections(result);
+              showSteps(result);
+              //showSteps(result, markerArray, stepDisplay, map);
+          }
+
+          function showSteps(result) {
+            //var myRoute = result.routes[0].legs[0];
+            for (var i = 0; i < result.routes[0].legs.length; i++) {
+                // for every leg, place marker, and add text to marker info window
+                result.routes[0].legs[i].start_address = markers[i].placeResult.name;
+                result.routes[0].legs[i].end_address = markers[i+1].placeResult.name;
+                console.log("result.routes[0]:" + JSON.stringify(result.routes[0]));
+          }
+        }
+        });
   }
 
   $("#getDirections").click(function(event) {
     //directions is an array of trip lat,lng
     event.preventDefault();
+    directionsDisplay.setMap(map);
+    directionsDisplay.setPanel(document.getElementById('listing'));
     var x = $("#dirType option:selected").text();
     mode = x.toUpperCase();
 
    if (mode =="WALKING" || mode =="DRIVING") {
-    console.log("mark01: " + markers);
-    //clearMarkers();
     clearResults();
     getDirections(trip);
-    // var place2 = autocomplete.getPlace();
-    // var latitude = place2.geometry.location.lat()
     // var longitude = place2.geometry.location.lng()
     calcRoute(directionsService,directionsDisplay);
     clearMarkers();
@@ -214,25 +234,21 @@ $(document).ready(function() {
 
   function getDirections(trip) {
     //var url = 'https://maps.googleapis.com/maps/api/directions/json?origin=Disneyland&destination=Universal+Studios+Hollywood4&key=${dirKey}';
-    // iterate through the trip array to get lat/lng or place id
+    // iterate through the trip array to get lat/lng or place id, then define origin, dest, & waypoints
     waypoint = [];
-    //console.log("tripIcons: " +  tripIcons);
-
+    console.log("trip: " + JSON.stringify(trip));
     if (trip[0].hasOwnProperty('place_id')) {
-      //origin = "place_id:" + trip[0].place_id;
       origin = trip[0].place_id;
       oPlaceId = true;
 
-      //request.origin = {'placeId': origin };
     } else {
         origin = trip[0].geometry.location.lat + ',' + trip[0].geometry.location.lng;
         oPlaceId = false;
       }
-      //console.log("origin: " + origin);
 
     if (trip.length > 2) {
       for (var i = 1; i < trip.length-1; i++) {
-        //for (var i in trip) {
+
         if (trip[i].hasOwnProperty('place_id')) {
           waypoint.push({
             location: {'placeId': trip[i].place_id},
@@ -244,13 +260,8 @@ $(document).ready(function() {
               location: trip[i].geometry.location.lat + ',' + trip[i].geometry.location.lng,
               stopover: true
             })
-            //console.log("waypoint: " + waypoint);
         }
       }
-      //console.log("waypoint: " + JSON.stringify(waypoint));
-      //for (i in waypoint) {
-        //console.log("waypoint: " + waypoint[i]);
-      //}
     }
     if (trip[trip.length - 1].hasOwnProperty('place_id')) {
       destination = trip[trip.length - 1].place_id;
@@ -259,8 +270,6 @@ $(document).ready(function() {
       destination = trip[trip.length - 1].geometry.location.lat + ',' + trip[trip.length - 1].geometry.location.lng;
       dPlaceId = false;
       }
-    console.log("dest: " + destination);
-
   }
 
   // pop-up window for a place
@@ -309,8 +318,7 @@ $(document).ready(function() {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         clearResults();
         //clearMarkers();
-        // Create a marker for each place found, and
-        // assign a letter of the alphabetic to each marker icon.
+        // Create a marker for each place found, and assign a letter of the alphabetic to each marker icon.
         var maxResults = 13;
         for (var i = 0; i < maxResults; i++) {
           var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
@@ -329,12 +337,9 @@ $(document).ready(function() {
           //markers[i].hidden = true;
        }
     }
-    markers = [];
-    markers.length = 0;
   }
 
-  // Set the country restriction based on user input.
-  // Also center and zoom the map on the given country.
+  // Set the country restriction based on user input. Also center and zoom the map on the given country.
   function setAutocompleteCountry() {
     var country = document.getElementById('country').value;
     if (country == 'all') {
@@ -367,15 +372,10 @@ $(document).ready(function() {
     //var add = addResult();
     console.log("markers[i]: " + markers[i]);
     console.log("Removing_marker[" + i + "]: ");
-      //return function() {
-        //markers[i].icon = null;
-        //markers[i].visible = false;
         markers[i].setMap(null);
         markers.splice(i,1);
         index--;
-        console.log("new index: " + index);
-        console.log(markers.length);
-      //};
+
   }
 
   function displayMarkers(){
@@ -387,18 +387,24 @@ $(document).ready(function() {
   $("#displayTrip").on('click', displayTrip);
 
   function displayTrip(){
+    directionsDisplay.setMap(null);
+    directionsDisplay.setPanel(null);
     clearResults();
+
     //trip is an array of all results
     for (var i = 0; i < trip.length; i++) {
       addResultTrip(trip, i);
+      setTimeout(dropMarker(i), i * 100);
+      //dropMarker(i);
     }
-    //console.log(trip);
   }
 
   function addResultTrip(trip, i) {
     // addResultTrip adds the entire trip array to the results div
     // it needs some info from each of the places, events, and trails methods
     // it should retain the result array, marker letter and icon set from those functions
+
+    //directionsDisplay.setPanel(null);
     var results = document.getElementById('results');
     var tr = document.createElement('tr');
     tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
@@ -469,7 +475,6 @@ $(document).ready(function() {
           console.log("i: " + i)
           console.log("index: " + index);
           trip.splice(i,1);
-          //console.log(markers[i]);
           tripIcons.splice(i,1);
           waypoint.splice(i,1);
           removeMarker(i);
@@ -485,7 +490,43 @@ $(document).ready(function() {
           //tripIcons[i].setMap(null);
           //console.log(JSON.stringify(tripIcons));
     };
-  }
+    // tbody#results.onclick = function showInfoWindow() {
+    // };
+    //tr = markers[index];
+
+    //$("tr").on('click', showInfoWindow);
+    //user clicks on trip result
+
+//=====================working trip=============================
+    tr.onclick = function dropMark(evt) {
+      console.log('clicked on trip at index ' + i + JSON.stringify(trip[i]));
+
+      setTimeout(dropMarker(i), i * 100);
+    };
+
+      // If the user clicks a marker, show the details of that marker in info window
+      // google.maps.event.addListener(markers[i], 'click', showInfoWindow);
+
+      // showInfoWindowPoint();
+      // function showInfoWindowPoint() {
+      //   var marker = this;
+      //   places.getDetails({
+      //       placeId: marker.placeResult.place_id
+      //
+      //     },
+      //     function(place, status) {
+      //       if (status !== google.maps.places.PlacesServiceStatus.OK) {
+      //         return;
+      //       }
+      //       infoWindow.open(map, marker);
+      //       buildIWContent(place);
+      //     });
+      // }
+      //return markers;
+    //};
+
+  };
+
     //delButton.addEventListener ("click", delTripRes() {
   // if user selects trail from drop down
   $("#trailForm").submit(function(event) {
@@ -634,7 +675,7 @@ $(document).ready(function() {
         infoWindow.open(map, marker);
         buildIWContent(place);
       });
-  }
+  };
 
   function addResultEvent(result, i) {
     var markerLetter = String.fromCharCode('a'.charCodeAt(0) + (i % 26)); //if event

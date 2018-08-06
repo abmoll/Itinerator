@@ -9,6 +9,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue.js"></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> -->
+
   <script src="./main.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOK8unHwKjh44byRIfMgAuRBpoH63_CqE&libraries=geometry,places&callback=initMap" async defer></script>
   <link href="https://fonts.googleapis.com/css?family=Vidaloka" rel="stylesheet">
@@ -20,12 +26,11 @@
    <div id="all">
   <div id="header">
     <h3>Itinerator</h3>
-    <!-- <img src="Vancouver_sunset.jpg" height="220px" width=100% opacity='0.5'> -->
   </div>
   <div id="btn_container" style="width:100%;">
     <div id="leftBtn" style="float:left; width:39%;">
-      <div id="placeHeader">Places</div>
-      <form id="placeForm">
+      <div id="placeHeader" class='panel-heading'>Places</div>
+      <form id="placeForm" class='panel-collapse'>
     <!-- <div id="placeField"> -->
       <select required id="placeType">
       <option selected disabled>Select type of place</option>
@@ -75,12 +80,6 @@
         <option value="this week">this week</option>
         <option value="next week">next week</option>
         <option value="thismonth">this month</option>
-        <option value="jan">Jan</option>
-        <option value="feb">Feb</option>
-        <option value="mar">Mar</option>
-        <option value="apr">Apr</option>
-        <option value="may">May</option>
-        <option value="jun">Jun</option>
         <input id="eventSubmit" type="submit" value="Find Events">
       </select>
     </form>
