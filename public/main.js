@@ -138,17 +138,15 @@ function initMap() {
 
 $(document).ready(function() {
 
-//   $('.panel-heading').hover(
+//   $('#leftBtn').hover(
 //  function() {
-//     $('.panel-collapse').collapse('show');
+//     $('#leftBtn').collapse('show');
 //   }, function() {
-//     $('.panel-collapse').collapse('hide');
+//     $('#leftBtn').collapse('hide');
 //   }
 // );
 
   function calcRoute(directionsService,directionsDisplay) {
-
-
       // define the request for directionsService
       if (oPlaceId == true && dPlaceId == true) {
             request = {
@@ -163,7 +161,6 @@ $(document).ready(function() {
               // dirType.value toUpperCase() document.getElementById('dirType').text
             };
       }
-
       if (oPlaceId == true && dPlaceId == false) {
             request = {
               origin: {
@@ -309,6 +306,11 @@ $(document).ready(function() {
 
   // Search for places in the selected city, within the viewport of the map.
   function search() {
+    if ($("#placeType option:selected").text() == 'trail'){
+      alert('trail!');
+      //addTrails(event);
+    }
+
     var search = {
       bounds: map.getBounds(),
       types: [$("#placeType option:selected").text()]
@@ -394,7 +396,7 @@ $(document).ready(function() {
     //trip is an array of all results
     for (var i = 0; i < trip.length; i++) {
       addResultTrip(trip, i);
-      setTimeout(dropMarker(i), i * 100);
+      setTimeout(dropMarker(i), i * 50);
       //dropMarker(i);
     }
   }
@@ -478,25 +480,9 @@ $(document).ready(function() {
           tripIcons.splice(i,1);
           waypoint.splice(i,1);
           removeMarker(i);
-
-          //markers[i].visible = false;
-          //console.log("WPs remain: " + JSON.stringify(waypoint))
-          //console.log("before - markers:" + JSON.stringify(markers));
-          //markers.splice(i,1);
-
           //displayMarkers();
           displayTrip();
-          //console.log("after - markers:" + JSON.stringify(markers));
-          //tripIcons[i].setMap(null);
-          //console.log(JSON.stringify(tripIcons));
     };
-    // tbody#results.onclick = function showInfoWindow() {
-    // };
-    //tr = markers[index];
-
-    //$("tr").on('click', showInfoWindow);
-    //user clicks on trip result
-
 //=====================working trip=============================
     tr.onclick = function dropMark(evt) {
       console.log('clicked on trip at index ' + i + JSON.stringify(trip[i]));
@@ -504,34 +490,15 @@ $(document).ready(function() {
       setTimeout(dropMarker(i), i * 100);
     };
 
-      // If the user clicks a marker, show the details of that marker in info window
-      // google.maps.event.addListener(markers[i], 'click', showInfoWindow);
-
-      // showInfoWindowPoint();
-      // function showInfoWindowPoint() {
-      //   var marker = this;
-      //   places.getDetails({
-      //       placeId: marker.placeResult.place_id
-      //
-      //     },
-      //     function(place, status) {
-      //       if (status !== google.maps.places.PlacesServiceStatus.OK) {
-      //         return;
-      //       }
-      //       infoWindow.open(map, marker);
-      //       buildIWContent(place);
-      //     });
-      // }
-      //return markers;
-    //};
-
   };
 
     //delButton.addEventListener ("click", delTripRes() {
   // if user selects trail from drop down
-  $("#trailForm").submit(function(event) {
-    //if ($("#placeType option:selected").text() == "trail") {
+$("#trailForm").submit(function addTrails(event) {
+//function addTrails(event) {
+  //$("#trailForm").submit(function(event) {
     event.preventDefault();
+    //if ($("#placeType option:selected").text() == "trail") {
     clearResults();
     var place2 = autocomplete.getPlace();
     var latitude = place2.geometry.location.lat()
@@ -561,7 +528,8 @@ $(document).ready(function() {
         addResultTrail(result[i], i);
       }
     })
-  })
+   //}
+ });
 
   $("#eventsForm").submit(function(event) {
     //if ($("#placeType option:selected").text() == "trail") {

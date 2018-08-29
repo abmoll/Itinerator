@@ -1,8 +1,10 @@
 //server.js
 
-var express = require('express')
-var app = express()
-var bodyParser = require('body-parser')
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+//var countries = require('./public/countries.js');
+//var main = require('./public')
 const request = require('request');
 var dirKey = 'AIzaSyBna-nft5cxYdVqD4vHCgurCqhi3B9zNhY';
 //var appKey = pcXqHp3KG3jmtgNJ
@@ -30,9 +32,6 @@ app.get('/apiTrail', function(req, res) {
   var trailUrl = `https://www.hikingproject.com/data/get-trails?lat=${req.query.lat}&lon=${req.query.lon}&maxDistance=10&key=200192113-0e12500ca3d4423414d88aaa658cda2e`
   request(trailUrl, function(err, response, body) {
     console.log("started API request");
-    //console.log("req.query="+req.query);
-    //console.log(response)
-    //console.log(body)
     res.send(body)
   })
 })
@@ -42,8 +41,6 @@ app.get('/apiEvent', function(req, res) {
   var eventUrl = `http://api.eventful.com/json/events/search?keywords=${req.query.keywords}&location=${req.query.location}&date=${req.query.date}&sort_order=popularity&page_size=14&app_key=pcXqHp3KG3jmtgNJ`
   request(eventUrl, function(err, response, body) {
     console.log("started API request");
-    //console.log("req.query="+req.query);
-    //console.log(response)
     res.send(body)
   })
 })
