@@ -573,6 +573,7 @@ $("#trailForm").submit(function addTrails(event) {
   function addResult(result, i) {
 
     var results = document.getElementById('results');
+    //unique line
     var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
     var markerIcon = MARKER_PATH + markerLetter + '.png';
     var tr = document.createElement('tr');
@@ -582,10 +583,6 @@ $("#trailForm").submit(function addTrails(event) {
       console.log("dropping marker")
       // check that result is not already in the trip array
       console.log("result.name: " + JSON.stringify(result.name));
-      //console.log("trip[index].name: " + JSON.stringify(trip[index].name));
-      //if (trip !== undefined){
-
-        //console.log("trip: " + JSON.stringify(trip[index].name));
 
       // ******* display marker on map *********
       markers[index] = new google.maps.Marker({
@@ -602,68 +599,11 @@ $("#trailForm").submit(function addTrails(event) {
         });
       }
 
-      // if (trip.length == 0) {
-      //   trip.push(result);
-      //   tripIcons.push(markerIcon);
-      // }
-
-      //if (trip.length !== 0) {
-
-        //var dupe = checkNameExists(trip, result)
-        //console.log(dupe);
-        if (checkNameExists(trip, result) == false) {
+      if (checkNameExists(trip, result) == false) {
           trip.push(result);
           tripIcons.push(markerIcon);
-        }
-      //}
-        // if (trip.indexOf(result) === -1) {
-        //   trip.push(result);
-        //   tripIcons.push(markerIcon);
-        // }
+      }
 
-
-
-//  ******** new test for dupes ************
-  //   if (index == 0) {
-  //     trip.push(result);
-  //     tripIcons.push(markerIcon);
-  //   }
-  //
-  //   if (index !== 0) {
-  //     var noDupe = true;
-  //     for (var i in trip) {
-  //       console.log('trip[' + i + '].name: ' + JSON.stringify(trip[i].name));
-  //         //if (trip[i].name !== markers[index].placeResult.name) {
-  //         if (trip[i].name !== result.name) {
-  //             console.log('no dupe here!');
-  //
-  //         }
-  //         else {
-  //           console.log('dupe!')
-  //           noDupe = false;
-  //     }
-  //             if (noDupe = true) {
-  //               trip.push(result);
-  //               tripIcons.push(markerIcon);
-  //             }
-  //
-  //     }
-  // }
-
-// ********* end here *************
-
-      //markers.push(marker);
-      //markers[i].setMap(map);
-      //console.log("markers[" + index + "]: " + JSON.stringify(markers[index]));
-      // Add the result to the trip array
-      //START HERE  if (result.name !== trip[index].name) {
-
-      //  }
-      //this will be the latest entry in the trip array
-      //console.log('trip[index].name: ' + JSON.stringify(trip[index].name));
-      //console.log("markers[index]: " + JSON.stringify(markers[index].placeResult.name));
-
-      //console.log('trip: ' + JSON.stringify(trip));
       setTimeout(dropMarker(index), i * 100);
 
       // If the user clicks a marker, show the details of that marker in info window
@@ -713,8 +653,10 @@ $("#trailForm").submit(function addTrails(event) {
   };
 
   function addResultEvent(result, i) {
+    //*===unique line===
     var markerLetter = String.fromCharCode('a'.charCodeAt(0) + (i % 26)); //if event
     //var markerIcon = MARKER_URL + markerLetter + '.png';
+    //***unique line***
     var markerIcon = `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=${markerLetter}|FE7569`
     var tr = document.createElement('tr');
     tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
@@ -775,6 +717,7 @@ $("#trailForm").submit(function addTrails(event) {
 
   function addResultTrail(result, i) {
     var results = document.getElementById('results');
+    //*** two unique lines ***
     var markerLetter = String.fromCharCode('1'.charCodeAt(0) + (i % 26));
     var markerIcon = `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=${markerLetter}|d8be8c`
 
