@@ -602,20 +602,20 @@ $("#trailForm").submit(function addTrails(event) {
         });
       }
 
-      if (trip.length == 0) {
-        trip.push(result);
-        tripIcons.push(markerIcon);
-      }
+      // if (trip.length == 0) {
+      //   trip.push(result);
+      //   tripIcons.push(markerIcon);
+      // }
 
-      if (trip.length !== 0) {
+      //if (trip.length !== 0) {
 
-        var dupe = checkNameExists(trip, result)
-        console.log(dupe);
-        if (dupe == false) {
+        //var dupe = checkNameExists(trip, result)
+        //console.log(dupe);
+        if (checkNameExists(trip, result) == false) {
           trip.push(result);
           tripIcons.push(markerIcon);
         }
-      }
+      //}
         // if (trip.indexOf(result) === -1) {
         //   trip.push(result);
         //   tripIcons.push(markerIcon);
