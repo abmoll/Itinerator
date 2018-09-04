@@ -580,8 +580,13 @@ $("#trailForm").submit(function addTrails(event) {
     // when user clicks on result, add marker to map and push the result into a trip array
     tr.onclick = function dropMark(evt) {
       console.log("dropping marker")
+      // check that result is not already in the trip array
+      console.log("result.name: " + JSON.stringify(result.name));
+      //console.log("trip[index].name: " + JSON.stringify(trip[index].name));
+      //if (trip !== undefined){
 
-      //google.maps.event.trigger(markers[i], 'click');
+        //console.log("trip: " + JSON.stringify(trip[index].name));
+
       // ******* display marker on map *********
       markers[index] = new google.maps.Marker({
         position: result.geometry.location,
@@ -589,14 +594,76 @@ $("#trailForm").submit(function addTrails(event) {
         icon: markerIcon
       });
       markers[index].placeResult = result;
+      console.log('markers[' + index + '].name: ' + JSON.stringify(markers[index].placeResult.name));
+
+      function checkNameExists(arr, newName) {
+        return arr.some(function(e) {
+          return e.name === newName.name;
+        });
+      }
+
+      if (trip.length == 0) {
+        trip.push(result);
+        tripIcons.push(markerIcon);
+      }
+
+      if (trip.length !== 0) {
+
+        var dupe = checkNameExists(trip, result)
+        console.log(dupe);
+        if (dupe == false) {
+          trip.push(result);
+          tripIcons.push(markerIcon);
+        }
+      }
+        // if (trip.indexOf(result) === -1) {
+        //   trip.push(result);
+        //   tripIcons.push(markerIcon);
+        // }
+
+
+
+//  ******** new test for dupes ************
+  //   if (index == 0) {
+  //     trip.push(result);
+  //     tripIcons.push(markerIcon);
+  //   }
+  //
+  //   if (index !== 0) {
+  //     var noDupe = true;
+  //     for (var i in trip) {
+  //       console.log('trip[' + i + '].name: ' + JSON.stringify(trip[i].name));
+  //         //if (trip[i].name !== markers[index].placeResult.name) {
+  //         if (trip[i].name !== result.name) {
+  //             console.log('no dupe here!');
+  //
+  //         }
+  //         else {
+  //           console.log('dupe!')
+  //           noDupe = false;
+  //     }
+  //             if (noDupe = true) {
+  //               trip.push(result);
+  //               tripIcons.push(markerIcon);
+  //             }
+  //
+  //     }
+  // }
+
+// ********* end here *************
+
       //markers.push(marker);
       //markers[i].setMap(map);
-      console.log("markers[" + index + "]: " + JSON.stringify(markers[index]));
+      //console.log("markers[" + index + "]: " + JSON.stringify(markers[index]));
       // Add the result to the trip array
+      //START HERE  if (result.name !== trip[index].name) {
 
-      trip.push(result);
-      tripIcons.push(markerIcon);
+      //  }
+      //this will be the latest entry in the trip array
+      //console.log('trip[index].name: ' + JSON.stringify(trip[index].name));
+      //console.log("markers[index]: " + JSON.stringify(markers[index].placeResult.name));
 
+      //console.log('trip: ' + JSON.stringify(trip));
       setTimeout(dropMarker(index), i * 100);
 
       // If the user clicks a marker, show the details of that marker in info window
