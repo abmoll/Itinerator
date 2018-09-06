@@ -204,7 +204,7 @@ $(document).ready(function() {
                 // for every leg, place marker, and add text to marker info window
                 result.routes[0].legs[i].start_address = markers[i].placeResult.name;
                 result.routes[0].legs[i].end_address = markers[i+1].placeResult.name;
-                console.log("result.routes[0]:" + JSON.stringify(result.routes[0]));
+                //console.log("result.routes[0]:" + JSON.stringify(result.routes[0]));
           }
         }
         });
@@ -233,7 +233,7 @@ $(document).ready(function() {
     //var url = 'https://maps.googleapis.com/maps/api/directions/json?origin=Disneyland&destination=Universal+Studios+Hollywood4&key=${dirKey}';
     // iterate through the trip array to get lat/lng or place id, then define origin, dest, & waypoints
     waypoint = [];
-    console.log("trip: " + JSON.stringify(trip));
+    //console.log("trip: " + JSON.stringify(trip));
     if (trip[0].hasOwnProperty('place_id')) {
       origin = trip[0].place_id;
       oPlaceId = true;
@@ -485,7 +485,7 @@ $(document).ready(function() {
     };
 //=====================working trip=============================
     tr.onclick = function dropMark(evt) {
-      console.log('clicked on trip at index ' + i + JSON.stringify(trip[i]));
+      console.log('clicked on trip at index ' + i + JSON.stringify(trip[i].name));
       setTimeout(dropMarker(i), i * 100);
     };
 
@@ -587,28 +587,27 @@ $("#trailForm").submit(function addTrails(event) {
       console.log("dropping marker")
       console.log("result.name: " + JSON.stringify(result.name));
       // ******* display marker on map *********
-      markers[index] = new google.maps.Marker({
-        position: result.geometry.location,
-        animation: google.maps.Animation.DROP,
-        icon: markerIcon
-      });
-      markers[index].placeResult = result;
-      console.log('markers[' + index + '].name: ' + JSON.stringify(markers[index].placeResult.name));
-
       function checkNameExists(arr, newName) {
         return arr.some(function(e) {
           return e.name === newName.name;
         });
       }
       if (checkNameExists(trip, result) == false) {
+        markers[index] = new google.maps.Marker({
+          position: result.geometry.location,
+          animation: google.maps.Animation.DROP,
+          icon: markerIcon
+        });
+        markers[index].placeResult = result;
           trip.push(result);
           tripIcons.push(markerIcon);
+          console.log('markers[' + index + '].name: ' + JSON.stringify(markers[index].placeResult.name));
+          google.maps.event.addListener(markers[index], 'click', showInfoWindow);
+          setTimeout(dropMarker(index), i * 100);
+          index++;
       }
-      setTimeout(dropMarker(index), i * 100);
+
       // If the user clicks a marker, show the details of that marker in info window
-      // if place
-      google.maps.event.addListener(markers[index], 'click', showInfoWindow);
-      index++
       return markers;
     };
 
@@ -673,7 +672,7 @@ $("#trailForm").submit(function addTrails(event) {
 
       // If the user clicks a marker, show the details of that marker in an info window.
       markers[index].placeResult = result;
-      console.log("markers[" + index + "]: " + JSON.stringify(markers[index]));
+      console.log("markers[" + index + "]: " + JSON.stringify(markers[index].name));
       // when result is added to map, also push it to trip array
       function checkNameExists(arr, newName) {
         return arr.some(function(e) {
@@ -681,6 +680,7 @@ $("#trailForm").submit(function addTrails(event) {
         });
       }
       if (checkNameExists(trip, result) == false) {
+
           trip.push(result);
           tripIcons.push(markerIcon);
       }
@@ -739,12 +739,9 @@ $("#trailForm").submit(function addTrails(event) {
         animation: google.maps.Animation.DROP,
         icon: markerIcon
       });
+      markers[index].placeResult = result;
 
-      function showInfoWindowTrail() {
-        var marker = this;
-        infoWindow.open(map, marker);
-        buildIWContentTrail(marker.placeResult);
-      }
+
       //==== placeResult is same data as trip, so we don't need both ====
       function checkNameExists(arr, newName) {
         return arr.some(function(e) {
@@ -755,15 +752,23 @@ $("#trailForm").submit(function addTrails(event) {
           trip.push(result);
           tripIcons.push(markerIcon);
       }
+      // trip.push(result);
+      // tripIcons.push(markerIcon);
       // If the user clicks a marker, show the details of that marker
       // in an info window.
-      markers[index].placeResult = result;
-      console.log("markers[" + index + "]: " + JSON.stringify(markers[index]));
+
+      console.log("markers[" + index + "]: " + JSON.stringify(markers[index].name));
       // ====if trail
       google.maps.event.addListener(markers[index], 'click', showInfoWindowTrail);
       setTimeout(dropMarker(index), i * 100);
       index++
     };
+
+    function showInfoWindowTrail() {
+      var marker = this;
+      infoWindow.open(map, marker);
+      buildIWContentTrail(marker.placeResult);
+    }
 
     // adding list results on right
     // creating blank cells
