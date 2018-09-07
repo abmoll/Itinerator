@@ -581,7 +581,7 @@ $("#trailForm").submit(function addTrails(event) {
     tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
 
     // when user clicks on result, add marker to map and push the result into a trip array
-    //tr.onclick = placeMarkerPushTrip(evt){
+    //tr.onclick = placeMarkerPushTrip(markerIcon,result){
     //tr.onclick = function dropMark(evt) {
     tr.onclick = function placeMarkerPushTrip(evt) {
       console.log("dropping marker")
@@ -606,6 +606,7 @@ $("#trailForm").submit(function addTrails(event) {
           setTimeout(dropMarker(index), i * 100);
           index++;
       }
+      //else setTimeout(dropMarker(i-1), (i-1) * 100);
 
       // If the user clicks a marker, show the details of that marker in info window
       return markers;
@@ -689,6 +690,7 @@ $("#trailForm").submit(function addTrails(event) {
       setTimeout(dropMarker(index), i * 100);
       index++;
     };
+
 
     function showInfoWindowEvent() {
       var marker = this;
