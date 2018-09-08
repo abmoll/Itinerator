@@ -396,7 +396,7 @@ $(document).ready(function() {
     //trip is an array of all results
     for (var i = 0; i < trip.length; i++) {
       addResultTrip(trip, i);
-      setTimeout(dropMarker(i), i * 50);
+      setTimeout(dropMarker(i), i * 10);
       //dropMarker(i);
     }
   }
@@ -635,17 +635,29 @@ $("#trailForm").submit(function addTrails(event) {
   // anchored on the marker for the place that the user selected.
   function showInfoWindow() {
     var marker = this;
-    // if place
-    places.getDetails({
-        placeId: marker.placeResult.place_id
-      },
-      function(place, status) {
-        if (status !== google.maps.places.PlacesServiceStatus.OK) {
-          return;
-        }
+    // *** if place ***
+    if (marker.placeResult.place_id) {
+        places.getDetails({
+            placeId: marker.placeResult.place_id
+          },
+          function(place, status) {
+            if (status !== google.maps.places.PlacesServiceStatus.OK) {
+              return;
+            }
+            infoWindow.open(map, marker);
+            buildIWContent(place);
+          });
+    }
+    // *** if trail ***
+    if (marker.placeResult.difficulty) {
         infoWindow.open(map, marker);
-        buildIWContent(place);
-      });
+        buildIWContentTrail(marker.placeResult);
+    }
+    // *** if event ***
+    if (marker.placeResult.start_time) {
+        infoWindow.open(map, marker);
+        buildIWContentEvent(marker.placeResult);
+      }
   };
 
   function addResultEvent(result, i) {
@@ -659,42 +671,8 @@ $("#trailForm").submit(function addTrails(event) {
 
     //when user clicks on result, add it to map and add the markerIcon
     tr.onclick = function(evt) {
-      //google.maps.event.trigger(markers[i], 'click');
-      markers[index] = new google.maps.Marker({
-        position: result.geometry.location,
-        animation: google.maps.Animation.DROP,
-        icon: markerIcon,
-        //label: markerLetter
-      });
-
-      // If the user clicks a marker, show the details of that marker in an info window.
-      markers[index].placeResult = result;
-      console.log("markers[" + index + "]: " + JSON.stringify(markers[index].name));
-      // when result is added to map, also push it to trip array
-      function checkNameExists(arr, newName) {
-        return arr.some(function(e) {
-          return e.name === newName.name;
-        });
-      }
-      if (checkNameExists(trip, result) == false) {
-          trip.push(result);
-          tripIcons.push(markerIcon);
-      }
-      //=======unique if event
-      google.maps.event.addListener(markers[index], 'click', showInfoWindowEvent); //if event
-      setTimeout(dropMarker(index), i * 100);
-      index++;
-    };
-
-
-    function showInfoWindowEvent() {
-      var marker = this;
-      infoWindow.open(map, marker);
-      // here is the problem!! markers[i] is previous
-      //buildIWContentEvent(markers[i].placeResult);
-      // if event
-      buildIWContentEvent(marker.placeResult);
-    }
+       placeMarkerPushTrip(markerIcon, result, i);
+     };
 
     // places data into results column
     var iconTd = document.createElement('td');
@@ -731,38 +709,8 @@ $("#trailForm").submit(function addTrails(event) {
 
     // when user clicks on result, add it to map
     tr.onclick = function(evt) {
-      //google.maps.event.trigger(markers[i], 'click');
-      markers[index] = new google.maps.Marker({
-        position: result.geometry.location,
-        animation: google.maps.Animation.DROP,
-        icon: markerIcon
-      });
-      markers[index].placeResult = result;
-      
-      //==== placeResult is same data as trip, so we don't need both ====
-      function checkNameExists(arr, newName) {
-        return arr.some(function(e) {
-          return e.name === newName.name;
-        });
-      }
-      if (checkNameExists(trip, result) == false) {
-          trip.push(result);
-          tripIcons.push(markerIcon);
-      }
-
-      console.log("markers[" + index + "]: " + JSON.stringify(markers[index].name));
-      // ====if trail
-      google.maps.event.addListener(markers[index], 'click', showInfoWindowTrail);
-      setTimeout(dropMarker(index), i * 100);
-      index++
+        placeMarkerPushTrip(markerIcon, result, i);
     };
-
-    function showInfoWindowTrail() {
-      var marker = this;
-      infoWindow.open(map, marker);
-      //if trail
-      buildIWContentTrail(marker.placeResult);
-    }
 
     // adding list results on right
     // creating blank cells
