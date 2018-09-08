@@ -524,7 +524,7 @@ $("#trailForm").submit(function addTrails(event) {
             }
           }
         })
-        addResultTrail(result[i], i);
+        addResult(result[i], i);
       }
     })
    //}
@@ -597,10 +597,14 @@ $("#trailForm").submit(function addTrails(event) {
 
   function addResult(result, i) {
 
-    var results = document.getElementById('results');
-    //====== unique lines if place
-    var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
-    var markerIcon = MARKER_PATH + markerLetter + '.png';
+    if (result.place_id) {
+        var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
+        var markerIcon = MARKER_PATH + markerLetter + '.png';
+    }
+    if (result.difficulty) {
+        var markerLetter = String.fromCharCode('1'.charCodeAt(0) + (i % 26));
+        var markerIcon = `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=${markerLetter}|d8be8c`
+    }
     var tr = document.createElement('tr');
     tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
 
@@ -608,15 +612,12 @@ $("#trailForm").submit(function addTrails(event) {
         placeMarkerPushTrip(markerIcon, result, i);
     };
 
-    // ********* build results column *******
+    // ********* build results column ****** function buildResults(markerIcon, result)
     var iconTd = document.createElement('td');
     var nameTd = document.createElement('td');
     var ratingTd = document.createElement('td');
 
-    var icon = document.createElement('img');
-    icon.src = markerIcon;
-    icon.setAttribute('class', 'placeIcon');
-    icon.setAttribute('className', 'placeIcon');
+    var icon = buildIcon(markerIcon);
 
     var name = document.createTextNode(result.name);
     var rating = document.createTextNode("\nRating: " + result.rating);
@@ -629,6 +630,14 @@ $("#trailForm").submit(function addTrails(event) {
     tr.appendChild(nameTd);
     tr.appendChild(ratingTd);
     results.appendChild(tr);
+  }
+
+  function buildIcon(markerIcon){
+      var icon = document.createElement('img');
+      icon.src = markerIcon;
+      icon.setAttribute('class', 'placeIcon');
+      icon.setAttribute('className', 'placeIcon');
+      return icon;
   }
 
   // Get the place details for a place. Show the information in an info window,
@@ -674,15 +683,12 @@ $("#trailForm").submit(function addTrails(event) {
        placeMarkerPushTrip(markerIcon, result, i);
      };
 
-    // places data into results column
+    // build results column - function buildResults()
     var iconTd = document.createElement('td');
     var nameTd = document.createElement('td');
     var dateTd = document.createElement('td'); //if event
 
-    var icon = document.createElement('img');
-    icon.src = markerIcon;
-    icon.setAttribute('class', 'placeIcon');
-    icon.setAttribute('className', 'placeIcon');
+    var icon = buildIcon(markerIcon);
 
     var name = document.createTextNode(result.name);
     var date = document.createTextNode("\nDate: " + result.start_time); //if event
@@ -696,50 +702,6 @@ $("#trailForm").submit(function addTrails(event) {
     tr.appendChild(dateTd); //if event
 
     results.appendChild(tr);
-  }
-
-  function addResultTrail(result, i) {
-    var results = document.getElementById('results');
-    //*** unique lines if trail ***
-    var markerLetter = String.fromCharCode('1'.charCodeAt(0) + (i % 26));
-    var markerIcon = `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=${markerLetter}|d8be8c`
-
-    var tr = document.createElement('tr');
-    tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
-
-    // when user clicks on result, add it to map
-    tr.onclick = function(evt) {
-        placeMarkerPushTrip(markerIcon, result, i);
-    };
-
-    // adding list results on right
-    // creating blank cells
-    var iconTd = document.createElement('td');
-    var nameTd = document.createElement('td');
-    var ratingTd = document.createElement('td');
-
-    // fill in atrributes of the icon
-    var icon = document.createElement('img');
-    icon.src = markerIcon;
-    icon.setAttribute('class', 'placeIcon');
-    icon.setAttribute('className', 'placeIcon');
-
-    var name = document.createTextNode(result.name);
-    var rating = document.createTextNode("\nRating: " + result.rating);
-
-    // add data into the cells
-    iconTd.appendChild(icon);
-    nameTd.appendChild(name);
-    ratingTd.appendChild(rating);
-
-    // add cells to the rows
-    tr.appendChild(iconTd);
-    tr.appendChild(nameTd);
-    tr.appendChild(ratingTd);
-
-    // add entire row to the results list
-    results.appendChild(tr);
-    return markers;
   }
 
   function clearResults() {
@@ -781,6 +743,7 @@ $("#trailForm").submit(function addTrails(event) {
     document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url +
       '">' + place.name + '</a></b>';
     //document.getElementById('iw-address').textContent = place.vicinity;
+    //document.getElementById('iw-website-row').style.display = 'none';
     document.getElementById('iw-website-row').style.display = 'none';
     document.getElementById('iw-address-row').style.display = 'none';
     document.getElementById('iw-eventDate-row').style.display = 'none';
@@ -789,14 +752,7 @@ $("#trailForm").submit(function addTrails(event) {
     document.getElementById('iw-venue-row').style.display = 'none';
     document.getElementById('iw-elevGain-row').style.display = '';
     document.getElementById('iw-elevGain').textContent = place.elevGain;
-
-    if (place.formatted_phone_number) {
-      document.getElementById('iw-phone-row').style.display = '';
-      document.getElementById('iw-phone').textContent =
-        place.formatted_phone_number;
-    } else {
-      document.getElementById('iw-phone-row').style.display = 'none';
-    }
+    document.getElementById('iw-phone-row').style.display = 'none';
 
     // Assign a five-star rating to the hotel, using a black star ('&#10029;')
     // to indicate the rating the hotel has earned, and a white star ('&#10025;')
