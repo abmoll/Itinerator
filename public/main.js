@@ -484,10 +484,10 @@ $(document).ready(function() {
           displayTrip();
     };
 //=====================working trip=============================
-    tr.onclick = function dropMark(evt) {
-      console.log('clicked on trip at index ' + i + JSON.stringify(trip[i].name));
-      setTimeout(dropMarker(i), i * 100);
-    };
+    // tr.onclick = function dropMark(evt) {
+    //   console.log('clicked on trip at index ' + i + JSON.stringify(trip[i].name));
+    //   //setTimeout(dropMarker(i), i * 100);
+    // };
 
   };
 
@@ -569,24 +569,9 @@ $("#trailForm").submit(function addTrails(event) {
     })
   })
 
-  function addResult(result, i) {
-
-    var results = document.getElementById('results');
-    //====== unique lines if place
-    var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
-    var markerIcon = MARKER_PATH + markerLetter + '.png';
-
-    // start of function
-    var tr = document.createElement('tr');
-    tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
-
-    // when user clicks on result, add marker to map and push the result into a trip array
-    //tr.onclick = placeMarkerPushTrip(markerIcon,result){
-    //tr.onclick = function dropMark(evt) {
-    tr.onclick = function placeMarkerPushTrip(evt) {
+  function placeMarkerPushTrip(markerIcon, result, i){
       console.log("dropping marker")
       console.log("result.name: " + JSON.stringify(result.name));
-      // ******* display marker on map *********
       function checkNameExists(arr, newName) {
         return arr.some(function(e) {
           return e.name === newName.name;
@@ -601,15 +586,26 @@ $("#trailForm").submit(function addTrails(event) {
         markers[index].placeResult = result;
           trip.push(result);
           tripIcons.push(markerIcon);
-          console.log('markers[' + index + '].name: ' + JSON.stringify(markers[index].placeResult.name));
+          //console.log('markers[' + index + '].name: ' + JSON.stringify(markers[index].placeResult.name));
           google.maps.event.addListener(markers[index], 'click', showInfoWindow);
           setTimeout(dropMarker(index), i * 100);
           index++;
       }
       //else setTimeout(dropMarker(i-1), (i-1) * 100);
+      //return markers;
+  }
 
-      // If the user clicks a marker, show the details of that marker in info window
-      return markers;
+  function addResult(result, i) {
+
+    var results = document.getElementById('results');
+    //====== unique lines if place
+    var markerLetter = String.fromCharCode('A'.charCodeAt(0) + (i % 26));
+    var markerIcon = MARKER_PATH + markerLetter + '.png';
+    var tr = document.createElement('tr');
+    tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
+
+    tr.onclick = function(evt) {
+        placeMarkerPushTrip(markerIcon, result, i);
     };
 
     // ********* build results column *******
@@ -639,9 +635,9 @@ $("#trailForm").submit(function addTrails(event) {
   // anchored on the marker for the place that the user selected.
   function showInfoWindow() {
     var marker = this;
+    // if place
     places.getDetails({
         placeId: marker.placeResult.place_id
-
       },
       function(place, status) {
         if (status !== google.maps.places.PlacesServiceStatus.OK) {
@@ -681,7 +677,6 @@ $("#trailForm").submit(function addTrails(event) {
         });
       }
       if (checkNameExists(trip, result) == false) {
-
           trip.push(result);
           tripIcons.push(markerIcon);
       }
@@ -697,6 +692,7 @@ $("#trailForm").submit(function addTrails(event) {
       infoWindow.open(map, marker);
       // here is the problem!! markers[i] is previous
       //buildIWContentEvent(markers[i].placeResult);
+      // if event
       buildIWContentEvent(marker.placeResult);
     }
 
@@ -742,8 +738,7 @@ $("#trailForm").submit(function addTrails(event) {
         icon: markerIcon
       });
       markers[index].placeResult = result;
-
-
+      
       //==== placeResult is same data as trip, so we don't need both ====
       function checkNameExists(arr, newName) {
         return arr.some(function(e) {
@@ -754,10 +749,6 @@ $("#trailForm").submit(function addTrails(event) {
           trip.push(result);
           tripIcons.push(markerIcon);
       }
-      // trip.push(result);
-      // tripIcons.push(markerIcon);
-      // If the user clicks a marker, show the details of that marker
-      // in an info window.
 
       console.log("markers[" + index + "]: " + JSON.stringify(markers[index].name));
       // ====if trail
@@ -769,6 +760,7 @@ $("#trailForm").submit(function addTrails(event) {
     function showInfoWindowTrail() {
       var marker = this;
       infoWindow.open(map, marker);
+      //if trail
       buildIWContentTrail(marker.placeResult);
     }
 
