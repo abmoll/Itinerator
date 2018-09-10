@@ -410,6 +410,7 @@ $(document).ready(function() {
     var results = document.getElementById('results');
     var tr = document.createElement('tr');
     tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
+
     if (trip[i].hasOwnProperty('start_time'))
       var isEvent = true;
 
@@ -420,6 +421,7 @@ $(document).ready(function() {
       var dateTd = document.createElement('td');
     else
       var ratingTd = document.createElement('td');
+
     var delTd = document.createElement('td');
     delTd.style.padding = '4px';
 
@@ -559,9 +561,7 @@ $("#trailForm").submit(function addTrails(event) {
             }
           }
         })
-        addResultEvent(result[i], i);
-        // console.log(body.events.event[i].title)
-        // console.log(body.events.event[i].start_time)
+        addResult(result[i], i);
       }
     })
   })
@@ -602,6 +602,11 @@ $("#trailForm").submit(function addTrails(event) {
         var markerLetter = String.fromCharCode('1'.charCodeAt(0) + (i % 26));
         var markerIcon = `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=${markerLetter}|d8be8c`
     }
+    if (result.start_time) {
+      var markerLetter = String.fromCharCode('a'.charCodeAt(0) + (i % 26)); //if event
+      var markerIcon = `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=${markerLetter}|FE7569`
+    }
+
     var tr = document.createElement('tr');
     tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
 
@@ -612,20 +617,33 @@ $("#trailForm").submit(function addTrails(event) {
     // ********* build results column ****** function buildResults(markerIcon, result)
     var iconTd = document.createElement('td');
     var nameTd = document.createElement('td');
-    var ratingTd = document.createElement('td');
+    if (result.start_time) {
+      var dateTd = document.createElement('td');
+      var date = document.createTextNode("\nDate: " + result.start_time);
+    }
+    else {
+      var ratingTd = document.createElement('td');
+      var rating = document.createTextNode("\nRating: " + result.rating);
+    }
 
     var icon = buildIcon(markerIcon);
-
+    
     var name = document.createTextNode(result.name);
-    var rating = document.createTextNode("\nRating: " + result.rating);
 
     iconTd.appendChild(icon);
     nameTd.appendChild(name);
-    ratingTd.appendChild(rating);
+    if (result.start_time)
+      nameTd.appendChild(date);
+    else
+      ratingTd.appendChild(rating);
 
     tr.appendChild(iconTd);
     tr.appendChild(nameTd);
-    tr.appendChild(ratingTd);
+    if (result.start_time)
+      tr.appendChild(dateTd);
+    else
+      tr.appendChild(ratingTd);
+
     results.appendChild(tr);
   }
 
@@ -665,41 +683,6 @@ $("#trailForm").submit(function addTrails(event) {
         buildIWContentEvent(marker.placeResult);
       }
   };
-
-  function addResultEvent(result, i) {
-    //*===unique lines if event =====
-    var markerLetter = String.fromCharCode('a'.charCodeAt(0) + (i % 26)); //if event
-    var markerIcon = `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=${markerLetter}|FE7569`
-
-    // start of function creates adds markers and adds to trip
-    var tr = document.createElement('tr');
-    tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
-
-    //when user clicks on result, add it to map and add the markerIcon
-    tr.onclick = function(evt) {
-       placeMarkerPushTrip(markerIcon, result, i);
-     };
-
-    // build results column - function buildResults()
-    var iconTd = document.createElement('td');
-    var nameTd = document.createElement('td');
-    var dateTd = document.createElement('td'); //if event
-
-    var icon = buildIcon(markerIcon);
-
-    var name = document.createTextNode(result.name);
-    var date = document.createTextNode("\nDate: " + result.start_time); //if event
-
-    iconTd.appendChild(icon);
-    nameTd.appendChild(name);
-    nameTd.appendChild(date); //if event
-
-    tr.appendChild(iconTd);
-    tr.appendChild(nameTd);
-    tr.appendChild(dateTd); //if event
-
-    results.appendChild(tr);
-  }
 
   function clearResults() {
     var results = document.getElementById('results');
