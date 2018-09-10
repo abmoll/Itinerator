@@ -424,10 +424,7 @@ $(document).ready(function() {
     delTd.style.padding = '4px';
 
     //create attibutes of the icon
-    var icon = document.createElement('img');
-    icon.src = tripIcons[i];
-    icon.setAttribute('class', 'placeIcon');
-    icon.setAttribute('className', 'placeIcon');
+    var icon = buildIcon(tripIcons[i]);
 
     var name = document.createTextNode(trip[i].name);
     if (isEvent)
@@ -738,6 +735,7 @@ $("#trailForm").submit(function addTrails(event) {
   }
   // Load the place information into the HTML elements used by the info window.
   function buildIWContentTrail(place) {
+
     // document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon" ' +
     //   'src="' + place.icon + '"/>';
     document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url +
@@ -757,6 +755,10 @@ $("#trailForm").submit(function addTrails(event) {
     // Assign a five-star rating to the hotel, using a black star ('&#10029;')
     // to indicate the rating the hotel has earned, and a white star ('&#10025;')
     // for the rating points not achieved.
+    displayRatingStars(place);
+  }
+
+  function displayRatingStars(place) {
     if (place.rating) {
       var ratingHtml = '';
       for (var i = 0; i < 5; i++) {
@@ -796,20 +798,7 @@ $("#trailForm").submit(function addTrails(event) {
     // Assign a five-star rating to the hotel, using a black star ('&#10029;')
     // to indicate the rating the hotel has earned, and a white star ('&#10025;')
     // for the rating points not achieved.
-    if (place.rating) {
-      var ratingHtml = '';
-      for (var i = 0; i < 5; i++) {
-        if (place.rating < (i + 0.5)) {
-          ratingHtml += '&#10025;';
-        } else {
-          ratingHtml += '&#10029;';
-        }
-        document.getElementById('iw-rating-row').style.display = '';
-        document.getElementById('iw-rating').innerHTML = ratingHtml;
-      }
-    } else {
-      document.getElementById('iw-rating-row').style.display = 'none';
-    }
+    displayRatingStars(place);
 
     // The regexp isolates the first part of the URL (domain plus subdomain)
     // to give a short URL for displaying in the info window.
