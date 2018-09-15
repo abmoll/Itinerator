@@ -402,38 +402,12 @@ $(document).ready(function() {
   }
 
   function addResultTrip(trip, i) {
-    // addResultTrip adds the entire trip array to the results div
-    // it needs some info from each of the places, events, and trails methods
-    // it should retain the result array, marker letter and icon set from those functions
-
-    //directionsDisplay.setPanel(null);
-    var results = document.getElementById('results');
     var tr = document.createElement('tr');
-    tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
-    if (trip[i].hasOwnProperty('start_time'))
-      var isEvent = true;
-
-    // create blank cells
-    var iconTd = document.createElement('td');
-    var nameTd = document.createElement('td');
-    if (isEvent)
-      var dateTd = document.createElement('td');
-    else
-      var ratingTd = document.createElement('td');
     var delTd = document.createElement('td');
     delTd.style.padding = '4px';
 
-    //create attibutes of the icon
-    var icon = document.createElement('img');
-    icon.src = tripIcons[i];
-    icon.setAttribute('class', 'placeIcon');
-    icon.setAttribute('className', 'placeIcon');
-
-    var name = document.createTextNode(trip[i].name);
-    if (isEvent)
-      var date = document.createTextNode(trip[i].start_time);
-    else
-      var rating = document.createTextNode("\nRating: " + trip[i].rating);
+    var icon = buildIcon(tripIcons[i]);
+    buildResults(icon, trip[i], tr, i);
 
       // delete button
       var delButton = document.createElement("delButton");
@@ -448,34 +422,12 @@ $(document).ready(function() {
         delResult(i);
       }
 
-    // add data to cells
-    iconTd.appendChild(icon);
-    nameTd.appendChild(name);
-    if (isEvent)
-      dateTd.appendChild(date);
-    else
-      ratingTd.appendChild(rating);
-
     delTd.appendChild(delButton);
 
-    // add cells to rows
-    tr.appendChild(iconTd);
-    tr.appendChild(nameTd);
-    if (isEvent)
-      tr.appendChild(dateTd);
-    else
-      tr.appendChild(ratingTd);
-
       tr.appendChild(delTd);
-      results.appendChild(tr);
 
       function delResult(i){
-          //event.preventDefault();
-          //console.log("WP removed: " +  JSON.stringify(waypoint[i]));
           alert("removed " + trip[i].name);
-          //remove element clicked on and remove its marker
-          console.log("i: " + i)
-          console.log("index: " + index);
           trip.splice(i,1);
           tripIcons.splice(i,1);
           waypoint.splice(i,1);
@@ -483,16 +435,9 @@ $(document).ready(function() {
           //displayMarkers();
           displayTrip();
     };
-//=====================working trip=============================
-    // tr.onclick = function dropMark(evt) {
-    //   console.log('clicked on trip at index ' + i + JSON.stringify(trip[i].name));
-    //   //setTimeout(dropMarker(i), i * 100);
-    // };
 
   };
 
-    //delButton.addEventListener ("click", delTripRes() {
-  // if user selects trail from drop down
 $("#trailForm").submit(function addTrails(event) {
 //function addTrails(event) {
   //$("#trailForm").submit(function(event) {
@@ -562,7 +507,8 @@ $("#trailForm").submit(function addTrails(event) {
             }
           }
         })
-        addResultEvent(result[i], i);
+        //addResultEvent(result[i], i);
+        addResult(result[i], i);
         // console.log(body.events.event[i].title)
         // console.log(body.events.event[i].start_time)
       }
@@ -605,31 +551,19 @@ $("#trailForm").submit(function addTrails(event) {
         var markerLetter = String.fromCharCode('1'.charCodeAt(0) + (i % 26));
         var markerIcon = `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=${markerLetter}|d8be8c`
     }
+    if (result.start_time) {
+        var markerLetter = String.fromCharCode('a'.charCodeAt(0) + (i % 26)); //if event
+        var markerIcon = `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=${markerLetter}|FE7569`
+    }
     var tr = document.createElement('tr');
-    tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
+    var icon = buildIcon(markerIcon);
+
+    buildResults(icon, result, tr, i);
+    //+++ tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
 
     tr.onclick = function(evt) {
         placeMarkerPushTrip(markerIcon, result, i);
     };
-
-    // ********* build results column ****** function buildResults(markerIcon, result)
-    var iconTd = document.createElement('td');
-    var nameTd = document.createElement('td');
-    var ratingTd = document.createElement('td');
-
-    var icon = buildIcon(markerIcon);
-
-    var name = document.createTextNode(result.name);
-    var rating = document.createTextNode("\nRating: " + result.rating);
-
-    iconTd.appendChild(icon);
-    nameTd.appendChild(name);
-    ratingTd.appendChild(rating);
-
-    tr.appendChild(iconTd);
-    tr.appendChild(nameTd);
-    tr.appendChild(ratingTd);
-    results.appendChild(tr);
   }
 
   function buildIcon(markerIcon){
@@ -639,6 +573,42 @@ $("#trailForm").submit(function addTrails(event) {
       icon.setAttribute('className', 'placeIcon');
       return icon;
   }
+
+  function buildResults(icon, result, tr, i) {
+      var results = document.getElementById('results');
+      tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
+      // create elements
+      var iconTd = document.createElement('td');
+      var nameTd = document.createElement('td');
+      if (result.start_time)
+        var dateTd = document.createElement('td');
+      else
+        var ratingTd = document.createElement('td');
+
+      var name = document.createTextNode(result.name);
+      if (result.start_time)
+        var date = document.createTextNode(result.start_time);
+      else
+        var rating = document.createTextNode("\nRating: " + result.rating);
+
+      // add data to cells
+      iconTd.appendChild(icon);
+      nameTd.appendChild(name);
+      if (result.start_time)
+        dateTd.appendChild(date);
+      else
+        ratingTd.appendChild(rating);
+
+      // add cells to rows
+      tr.appendChild(iconTd);
+      tr.appendChild(nameTd);
+      if (result.start_time)
+        tr.appendChild(dateTd);
+      else
+        tr.appendChild(ratingTd);
+
+      results.appendChild(tr);
+}
 
   // Get the place details for a place. Show the information in an info window,
   // anchored on the marker for the place that the user selected.
@@ -669,41 +639,6 @@ $("#trailForm").submit(function addTrails(event) {
       }
   };
 
-  function addResultEvent(result, i) {
-    //*===unique lines if event =====
-    var markerLetter = String.fromCharCode('a'.charCodeAt(0) + (i % 26)); //if event
-    var markerIcon = `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=${markerLetter}|FE7569`
-
-    // start of function creates adds markers and adds to trip
-    var tr = document.createElement('tr');
-    tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
-
-    //when user clicks on result, add it to map and add the markerIcon
-    tr.onclick = function(evt) {
-       placeMarkerPushTrip(markerIcon, result, i);
-     };
-
-    // build results column - function buildResults()
-    var iconTd = document.createElement('td');
-    var nameTd = document.createElement('td');
-    var dateTd = document.createElement('td'); //if event
-
-    var icon = buildIcon(markerIcon);
-
-    var name = document.createTextNode(result.name);
-    var date = document.createTextNode("\nDate: " + result.start_time); //if event
-
-    iconTd.appendChild(icon);
-    nameTd.appendChild(name);
-    nameTd.appendChild(date); //if event
-
-    tr.appendChild(iconTd);
-    tr.appendChild(nameTd);
-    tr.appendChild(dateTd); //if event
-
-    results.appendChild(tr);
-  }
-
   function clearResults() {
     var results = document.getElementById('results');
     while (results.childNodes[0]) {
@@ -715,8 +650,10 @@ $("#trailForm").submit(function addTrails(event) {
   function buildIWContentEvent(place) {
     // document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon" ' +
     //   'src="' + place.icon + '"/>';
-    document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url +
+    $('#iw-url').innerHTML = '<b><a href="' + place.url +
       '">' + place.name + '</a></b>';
+    document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url +
+        '">' + place.name + '</a></b>';
     document.getElementById('iw-website-row').style.display = 'none';
     document.getElementById('iw-rating-row').style.display = 'none';
     document.getElementById('iw-difficulty-row').style.display = 'none';
