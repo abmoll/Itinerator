@@ -10,7 +10,6 @@ var map, places, infoWindow;
 var index = 0;
 var markers = [];
 var marker = [];
-var allMarkers = [];
 var autocomplete;
 var trip = [];
 var tripIcons = [];
@@ -298,6 +297,9 @@ $(document).ready(function() {
     if (place.geometry) {
       map.panTo(place.geometry.location);
       map.setZoom(12);
+      // for (var i=0; i<trip.length; i++) {
+      //     delResult(trip,i);
+      // }
       search();
     } else {
       document.getElementById('autocomplete').placeholder = 'Enter a city';
@@ -371,13 +373,9 @@ $(document).ready(function() {
   }
 
   function removeMarker(i){
-    //var add = addResult();
-    console.log("markers[i]: " + markers[i]);
-    console.log("Removing_marker[" + i + "]: ");
-        markers[i].setMap(null);
-        markers.splice(i,1);
-        index--;
-
+      markers[i].setMap(null);
+      markers.splice(i,1);
+      index--;
   }
 
   function displayMarkers(){
@@ -397,7 +395,6 @@ $(document).ready(function() {
     for (var i = 0; i < trip.length; i++) {
       addResultTrip(trip, i);
       setTimeout(dropMarker(i), i * 10);
-      //dropMarker(i);
     }
   }
 
@@ -417,30 +414,28 @@ $(document).ready(function() {
       img.src = "./img/deleteButton.png";
       delButton.appendChild(img);
 
-      //delButton.onclick = delResult;
       delButton.onclick = function(){
-        delResult(i);
+        delResult(trip, i);
       }
 
     delTd.appendChild(delButton);
+    tr.appendChild(delTd);
 
-      tr.appendChild(delTd);
-
-      function delResult(i){
-          alert("removed " + trip[i].name);
-          trip.splice(i,1);
-          tripIcons.splice(i,1);
-          waypoint.splice(i,1);
-          removeMarker(i);
-          //displayMarkers();
-          displayTrip();
-    };
 
   };
 
-$("#trailForm").submit(function addTrails(event) {
+  function delResult(trip, i) {
+      alert("removed " + trip[i].name);
+      trip.splice(i,1);
+      //tripIcons.splice(i,1);
+      waypoint.splice(i,1);
+      removeMarker(i);
+      displayTrip();
+};
+
+//$("#trailForm").submit(function addTrails(event) {
 //function addTrails(event) {
-  //$("#trailForm").submit(function(event) {
+$("#trailForm").submit(function(event) {
     event.preventDefault();
     //if ($("#placeType option:selected").text() == "trail") {
     clearResults();
@@ -472,24 +467,20 @@ $("#trailForm").submit(function addTrails(event) {
         addResult(result[i], i);
       }
     })
-   //}
  });
 
   $("#eventsForm").submit(function(event) {
-    //if ($("#placeType option:selected").text() == "trail") {
     event.preventDefault();
     clearResults();
     var place = autocomplete.getPlace();
     //var location = place.address_components[0].long_name
     //if place country is UK then use place.address_components[0].long_name + "," + place.address_components[4].long_name
     var location = place.formatted_address
-    //console.log(location)
     var keyword = $("#eventType option:selected").text()
     var date = $("#eventTime option:selected").text()
 
     $.get(`/apiEvent?keywords=${keyword}&location=${location}&date=${date}`, function(body, status) {
       body = JSON.parse(body);
-      //console.log(body)
       var result = []
       for (var i = 0; i < 12; i++) {
         result.push({
@@ -507,16 +498,12 @@ $("#trailForm").submit(function addTrails(event) {
             }
           }
         })
-        //addResultEvent(result[i], i);
         addResult(result[i], i);
-        // console.log(body.events.event[i].title)
-        // console.log(body.events.event[i].start_time)
       }
     })
   })
 
   function placeMarkerPushTrip(markerIcon, result, i){
-      console.log("dropping marker")
       console.log("result.name: " + JSON.stringify(result.name));
       function checkNameExists(arr, newName) {
         return arr.some(function(e) {
@@ -559,7 +546,6 @@ $("#trailForm").submit(function addTrails(event) {
     var icon = buildIcon(markerIcon);
 
     buildResults(icon, result, tr, i);
-    //+++ tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
 
     tr.onclick = function(evt) {
         placeMarkerPushTrip(markerIcon, result, i);
@@ -577,6 +563,7 @@ $("#trailForm").submit(function addTrails(event) {
   function buildResults(icon, result, tr, i) {
       var results = document.getElementById('results');
       tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
+
       // create elements
       var iconTd = document.createElement('td');
       var nameTd = document.createElement('td');
@@ -648,12 +635,12 @@ $("#trailForm").submit(function addTrails(event) {
 
   // Load the place information into the HTML elements used by the info window.
   function buildIWContentEvent(place) {
-    // document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon" ' +
-    //   'src="' + place.icon + '"/>';
-    $('#iw-url').innerHTML = '<b><a href="' + place.url +
-      '">' + place.name + '</a></b>';
-    document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url +
-        '">' + place.name + '</a></b>';
+    // if (place.start_time)
+    // if (place.difficulty)
+    // if (place.place_id)
+    //document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon" ' + 'src="' + place.icon + '"/>';
+    //$('#iw-url').innerHTML = '<b><a href="' + place.url + '">' + place.name + '</a></b>';
+    document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url + '">' + place.name + '</a></b>';
     document.getElementById('iw-website-row').style.display = 'none';
     document.getElementById('iw-rating-row').style.display = 'none';
     document.getElementById('iw-difficulty-row').style.display = 'none';
@@ -675,8 +662,6 @@ $("#trailForm").submit(function addTrails(event) {
   }
   // Load the place information into the HTML elements used by the info window.
   function buildIWContentTrail(place) {
-    // document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon" ' +
-    //   'src="' + place.icon + '"/>';
     document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url +
       '">' + place.name + '</a></b>';
     //document.getElementById('iw-address').textContent = place.vicinity;
@@ -691,10 +676,16 @@ $("#trailForm").submit(function addTrails(event) {
     document.getElementById('iw-elevGain').textContent = place.elevGain;
     document.getElementById('iw-phone-row').style.display = 'none';
 
-    // Assign a five-star rating to the hotel, using a black star ('&#10029;')
-    // to indicate the rating the hotel has earned, and a white star ('&#10025;')
-    // for the rating points not achieved.
     if (place.rating) {
+      createStarRating(place)
+    } else {
+      document.getElementById('iw-rating-row').style.display = 'none';
+    }
+  }
+
+  function createStarRating(place) {
+    // use black star ('&#10029;') to indicate the rating earned,
+    // and a white star ('&#10025;') for the rating points not achieved.
       var ratingHtml = '';
       for (var i = 0; i < 5; i++) {
         if (place.rating < (i + 0.5)) {
@@ -704,11 +695,8 @@ $("#trailForm").submit(function addTrails(event) {
         }
         document.getElementById('iw-rating-row').style.display = '';
         document.getElementById('iw-rating').innerHTML = ratingHtml;
-      }
-    } else {
-      document.getElementById('iw-rating-row').style.display = 'none';
-    }
   }
+}
 
   // Load the place information into the HTML elements used by the info window.
   function buildIWContent(place) {
@@ -730,20 +718,8 @@ $("#trailForm").submit(function addTrails(event) {
       document.getElementById('iw-phone-row').style.display = 'none';
     }
 
-    // Assign a five-star rating to the hotel, using a black star ('&#10029;')
-    // to indicate the rating the hotel has earned, and a white star ('&#10025;')
-    // for the rating points not achieved.
     if (place.rating) {
-      var ratingHtml = '';
-      for (var i = 0; i < 5; i++) {
-        if (place.rating < (i + 0.5)) {
-          ratingHtml += '&#10025;';
-        } else {
-          ratingHtml += '&#10029;';
-        }
-        document.getElementById('iw-rating-row').style.display = '';
-        document.getElementById('iw-rating').innerHTML = ratingHtml;
-      }
+      createStarRating(place);
     } else {
       document.getElementById('iw-rating-row').style.display = 'none';
     }
