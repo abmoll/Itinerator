@@ -287,24 +287,35 @@ $(document).ready(function() {
   // ** add event listener for placeType when placeType changes, get autoComplete city **
   autocomplete.addListener('place_changed', onPlaceChanged);
 
+  $("#placeSubmit").on('click', onPlaceChanged);
+  // whenever someone changes the city and clicks button, clear trip, and do onPlaceChanged
+
   // Add a DOM event listener to react when the user selects a country.
   document.getElementById('country').addEventListener('change', setAutocompleteCountry);
 
   // When the user selects a city, get the place details for the city and
   // zoom the map in on the city.
   function onPlaceChanged() {
+    //alert('save trip?');
+    //clearTrip(trip);
     var place = autocomplete.getPlace();
+
     if (place.geometry) {
       map.panTo(place.geometry.location);
       map.setZoom(12);
-      // for (var i=0; i<trip.length; i++) {
-      //     delResult(trip,i);
-      // }
+
       search();
     } else {
       document.getElementById('autocomplete').placeholder = 'Enter a city';
     }
   }
+
+  // function clearTrip(trip) {
+  //   if (trip.length) {
+  //     trip.length = 0;
+  //     marker.length = 0;
+  //   }
+  // }
 
   // Search for places in the selected city, within the viewport of the map.
   function search() {
@@ -421,15 +432,15 @@ $(document).ready(function() {
     delTd.appendChild(delButton);
     tr.appendChild(delTd);
 
-
   };
 
   function delResult(trip, i) {
       alert("removed " + trip[i].name);
       trip.splice(i,1);
-      //tripIcons.splice(i,1);
+      tripIcons.splice(i,1);
       waypoint.splice(i,1);
       removeMarker(i);
+      // do not execute this if changing cities
       displayTrip();
 };
 
