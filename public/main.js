@@ -417,6 +417,11 @@ $(document).ready(function() {
     var icon = buildIcon(tripIcons[i]);
     buildResults(icon, trip[i], tr, i);
 
+    //google.maps.event.addListener(markers[index], 'click', showInfoWindow);
+    icon.onclick = function(){
+        alert('clicked trip ' + i)
+    }
+
       // delete button
       var delButton = document.createElement("delButton");
       var img = document.createElement('img');
@@ -575,6 +580,7 @@ $("#trailForm").submit(function(event) {
       var results = document.getElementById('results');
       tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
 
+
       // create elements
       var iconTd = document.createElement('td');
       var nameTd = document.createElement('td');
@@ -600,6 +606,7 @@ $("#trailForm").submit(function(event) {
       // add cells to rows
       tr.appendChild(iconTd);
       tr.appendChild(nameTd);
+
       if (result.start_time)
         tr.appendChild(dateTd);
       else
