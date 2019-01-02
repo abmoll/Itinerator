@@ -1,5 +1,12 @@
 /* Always set the map height explicitly to define the size of the div
    * element that contains the map. */
+.sortable-dragging{
+  font-family: sans-serif;
+}
+.sortable-placeholder{
+  font-family: sans-serif;
+}
+
   html, body {
     height: 100%;
     font-family: 'Oswald', sans-serif;
@@ -99,7 +106,7 @@
     margin-right: 2px;
   }
   #map {
-    height: 650px; 
+    height: 650px;
     width: 100%;
     padding: 0px;
     text-align: center;

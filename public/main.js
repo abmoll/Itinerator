@@ -119,6 +119,7 @@ var countries = {
   }
 };
 
+
 // initialize map on webpage
 function initMap() {
    directionsService = new google.maps.DirectionsService();
@@ -137,13 +138,13 @@ function initMap() {
 
 $(document).ready(function() {
 
-//   $('#leftBtn').hover(
-//  function() {
-//     $('#leftBtn').collapse('show');
-//   }, function() {
-//     $('#leftBtn').collapse('hide');
-//   }
-// );
+  $('.sortable').sortable().bind('sortupdate', function() {
+    // Triggered when the user stopped sorting and the DOM position has changed.
+});
+
+// $('.sortable').sortable({
+//     items: ':not(.disabled)'
+// });
 
   function calcRoute(directionsService,directionsDisplay) {
       // define the request for directionsService

@@ -3,7 +3,7 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-//var countries = require('./public/countries.js');
+// var countries = require('./public/countries.js');
 //var main = require('./public')
 const request = require('request');
 var dirKey = 'AIzaSyBna-nft5cxYdVqD4vHCgurCqhi3B9zNhY';
@@ -21,9 +21,6 @@ app.get('/apiDirections', function(req, res) {
   //var eventUrl = `http://api.eventful.com/json/events/search?app_key=pcXqHp3KG3jmtgNJ&keywords=${req.query.keywords}&location=${req.query.location}&date=${req.query.date}`
   request(dirUrl, function(err, response, body) {
     console.log("started API request");
-    //console.log("req.query="+req.query);
-    //console.log(response)
-    //console.log(body)
     res.send(body)
   })
 })
