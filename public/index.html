@@ -25,7 +25,20 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans|Oswald" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="style.css">
 
-
+  <script>
+      function allowDrop(ev) {
+        ev.preventDefault();
+      }
+      function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+      }
+      function drop(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        // ev.target.insertBefore(document.getElementById(data), ev.tr);
+        ev.target.appendChild(document.getElementById(data));
+      }
+      </script>
 </head>
 
 <body>
@@ -115,17 +128,17 @@
         <div id="left"></div>
       </div>
       <div id="right" style="float:right; width:25%; padding:0px;">
-        <div id="listing">
+        <div id="listing" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <!-- <tr draggable="true" ondragstart="drag(event)" id="drag1"> -->
           <table id="resultsTable">
+
+              <!-- <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"> -->
+                  
+                <!-- </div> -->
+                <!-- <div id="div2" ondrop="drop(event)" ondragover="allowDrop(event)"></div> -->
+            
             <tbody id="results"></tbody>
-            <ul class="sortable">
-              <li>item1</li>
-                <li>item2</li>
-                </ul>
-            <script src="jquery.sortable.js"></script>
-            <script>
-                $('.sortable').sortable();
-              </script>
+   
           </table>
         </div>
       </div>

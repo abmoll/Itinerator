@@ -138,9 +138,9 @@ function initMap() {
 
 $(document).ready(function() {
 
-  $('.sortable').sortable().bind('sortupdate', function() {
-    // Triggered when the user stopped sorting and the DOM position has changed.
-});
+//   $('.sortable').sortable().bind('sortupdate', function() {
+//     // Triggered when the user stopped sorting and the DOM position has changed.
+// });
 
 // $('.sortable').sortable({
 //     items: ':not(.disabled)'
@@ -410,9 +410,32 @@ $(document).ready(function() {
     }
   }
 
+  // function allowDrop(ev) {
+  //   ev.preventDefault();
+  // }
+  // function drag(ev) {
+  //   alert('dragging');
+  //   ev.dataTransfer.setData("text", ev.target.id);
+  // }
+  // function drop(ev) {
+  //   ev.preventDefault();
+  //   alert('dropping');
+  //   var data = ev.dataTransfer.getData("text");
+  //   ev.target.appendChild(document.getElementById(data));
+  // }
+
+
   function addResultTrip(trip, i) {
     var tr = document.createElement('tr');
     var delTd = document.createElement('td');
+    tr.draggable = 'true';
+    // tr.className = 'sortable';
+    tr.id = Math.floor((Math.random() * 100) + 1);
+    // tr.ondragstart = 'drag(event)';
+    tr.ondrop = 'drop(event)';
+    tr.ondragover = 'allowDrop(event)';
+    tr.setAttribute('ondragstart', 'drag(event)');
+    
     delTd.style.padding = '4px';
 
     var icon = buildIcon(tripIcons[i]);
@@ -580,7 +603,6 @@ $("#trailForm").submit(function(event) {
   function buildResults(icon, result, tr, i) {
       var results = document.getElementById('results');
       tr.style.backgroundColor = (i % 2 === 0 ? '#d0d8cd' : '#FFFFFF');
-
 
       // create elements
       var iconTd = document.createElement('td');

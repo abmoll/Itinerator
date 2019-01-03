@@ -1,11 +1,11 @@
 /* Always set the map height explicitly to define the size of the div
    * element that contains the map. */
-.sortable-dragging{
+/* .sortable-dragging{
   font-family: sans-serif;
 }
 .sortable-placeholder{
   font-family: sans-serif;
-}
+} */
 
   html, body {
     height: 100%;
@@ -19,7 +19,7 @@
   }
   #leftBtn, #rightBtn, #farBtn {
     border-radius: 10px;
-    border: 1px color: #81b27e; height: 120px;
+    border: 1px; height: 120px;
     border-style: dotted;
     padding: 1px;
     padding-top: 0px;
