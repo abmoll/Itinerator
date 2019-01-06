@@ -410,32 +410,10 @@ $(document).ready(function() {
     }
   }
 
-  // function allowDrop(ev) {
-  //   ev.preventDefault();
-  // }
-  // function drag(ev) {
-  //   alert('dragging');
-  //   ev.dataTransfer.setData("text", ev.target.id);
-  // }
-  // function drop(ev) {
-  //   ev.preventDefault();
-  //   alert('dropping');
-  //   var data = ev.dataTransfer.getData("text");
-  //   ev.target.appendChild(document.getElementById(data));
-  // }
-
 
   function addResultTrip(trip, i) {
     var tr = document.createElement('tr');
     var delTd = document.createElement('td');
-    tr.draggable = 'true';
-    // tr.className = 'sortable';
-    tr.id = Math.floor((Math.random() * 100) + 1);
-    // tr.ondragstart = 'drag(event)';
-    tr.ondrop = 'drop(event)';
-    tr.ondragover = 'allowDrop(event)';
-    tr.setAttribute('ondragstart', 'drag(event)');
-    
     delTd.style.padding = '4px';
 
     var icon = buildIcon(tripIcons[i]);
