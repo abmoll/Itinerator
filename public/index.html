@@ -183,6 +183,8 @@
     </div>
   </div>
 
+  <div id="q-app"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/vue@^2.0.0/dist/vue.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/quasar@1.7.1/dist/quasar.umd.min.js"></script>
 
@@ -190,6 +192,21 @@
   <script type="text/javascript">
     $('tbody').sortable();
   </script>
+
+<script>
+  /*
+    Example kicking off the UI. Obviously, adapt this to your specific needs.
+    Assumes you have a <div id="q-app"></div> in your <body> above
+   */
+  new Vue({
+    el: '#q-app',
+    data: function () {
+      return {}
+    },
+    methods: {},
+    // ...etc
+  })
+</script>
 </body>
 
 </html>
