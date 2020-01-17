@@ -230,7 +230,6 @@ $(document).ready(function() {
   })
 
   function getDirections(trip) {
-    //var url = 'https://maps.googleapis.com/maps/api/directions/json?origin=Disneyland&destination=Universal+Studios+Hollywood4&key=${dirKey}';
     // iterate through the trip array to get lat/lng or place id, then define origin, dest, & waypoints
     waypoint = [];
     //console.log("trip: " + JSON.stringify(trip));
@@ -297,8 +296,6 @@ $(document).ready(function() {
   // When the user selects a city, get the place details for the city and
   // zoom the map in on the city.
   function onPlaceChanged() {
-    //alert('save trip?');
-    //clearTrip(trip);
     var place = autocomplete.getPlace();
 
     if (place.geometry) {
@@ -307,7 +304,8 @@ $(document).ready(function() {
 
       search();
     } else {
-      document.getElementById('autocomplete').placeholder = 'Enter a city';
+      // document.getElementById('autocomplete').placeholder = 'Enter a city';
+      $('#autocomplete').placeholder = 'Enter City';
     }
   }
 
@@ -333,7 +331,6 @@ $(document).ready(function() {
     places.nearbySearch(search, function(results, status) {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         clearResults();
-        //clearMarkers();
         // Create a marker for each place found, and assign a letter of the alphabetic to each marker icon.
         var maxResults = 13;
         for (var i = 0; i < maxResults; i++) {
@@ -348,9 +345,7 @@ $(document).ready(function() {
   function clearMarkers() {
     for (var i = 0; i < markers.length; i++) {
        if (markers[i] !== null) {
-          //markers[i].icon = null;
           markers[i].setMap(null);
-          //markers[i].hidden = true;
        }
     }
   }
@@ -375,7 +370,6 @@ $(document).ready(function() {
       map.setZoom(countries[country].zoom);
     }
     clearResults();
-    // clearMarkers();
   }
 
   function dropMarker(index) {
@@ -419,7 +413,6 @@ $(document).ready(function() {
     var icon = buildIcon(tripIcons[i]);
     buildResults(icon, trip[i], tr, i);
 
-    //google.maps.event.addListener(markers[index], 'click', showInfoWindow);
     icon.onclick = function(){
         alert('clicked trip ' + i)
     }
@@ -438,7 +431,7 @@ $(document).ready(function() {
 
     delTd.appendChild(delButton);
     tr.appendChild(delTd);
-
+      console.table(trip);
   };
 
   function delResult(trip, i) {
@@ -654,11 +647,8 @@ $("#trailForm").submit(function(event) {
 
   // Load the place information into the HTML elements used by the info window.
   function buildIWContentEvent(place) {
-    // if (place.start_time)
-    // if (place.difficulty)
-    // if (place.place_id)
     //document.getElementById('iw-icon').innerHTML = '<img class="hotelIcon" ' + 'src="' + place.icon + '"/>';
-    //$('#iw-url').innerHTML = '<b><a href="' + place.url + '">' + place.name + '</a></b>';
+    // $('#iw-url').innerHTML = '<b><a href="' + place.url + '">' + place.name + '</a></b>';
     document.getElementById('iw-url').innerHTML = '<b><a href="' + place.url + '">' + place.name + '</a></b>';
     document.getElementById('iw-website-row').style.display = 'none';
     document.getElementById('iw-rating-row').style.display = 'none';
